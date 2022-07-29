@@ -1,36 +1,84 @@
-import React from 'react'
-// import { Outlet } from 'react-router-dom'
-import { FabricJSCanvas, useFabricJSEditor } from 'fabricjs-react'
+import { useLayoutEffect, useState } from 'react'
+import { fabric } from 'fabric'
+import { useCanvas } from 'context/CanvasContext'
+
+const BACKGROUND_COLOR = 'rgb(229 ,231, 235 ,1)'
+const WIDTH = 600
+const HEIGHT = 700
 
 export default function App() {
-  // return <Outlet />
-  const { editor, onReady } = useFabricJSEditor()
-  const onAddCircle = () => {
-    editor?.addCircle()
+  const { canvas, setCanvas } = useCanvas()
+  const [keyword, setKeyword] = useState('')
+
+  useLayoutEffect(() => {
+    if (canvas) return
+    const _canvas = new fabric.Canvas('canvas', {
+      height: HEIGHT,
+      width: WIDTH,
+      fireRightClick: true,
+      fireMiddleClick: true,
+      stopContextMenu: true,
+      backgroundColor: BACKGROUND_COLOR,
+      backgroundImage: undefined,
+    })
+    _canvas.requestRenderAll()
+    setCanvas(_canvas)
+  }, [])
+
+  const onChangeKeyword = (e) => {
+    setKeyword(e.target.value)
   }
-  const onAddRectangle = () => {
-    editor?.addRectangle()
+
+  const handleEnter = (e) => {
+    if (e.key === 'Enter') {
+      console.log(keyword)
+      if (keyword === '') return
+
+      createTextLayer()
+    }
+  }
+
+  const createTextLayer = () => {
+    canvas.setBackgroundColor(BACKGROUND_COLOR)
+    canvas.remove(...canvas.getObjects())
+    var text = new fabric.Text(keyword, {
+      left: canvas.width / 2,
+      top: canvas.height / 2,
+      fontFamily: 'Inter',
+      shadow: 'green -5px -5px 3px',
+      stroke: '#c3bfbf',
+      strokeWidth: 3,
+      textBackgroundColor: 'rgb(0,200,0)',
+      lineHeight: 0.85,
+    })
+    canvas.add(text)
+    let h = canvas.getHeight() - text.get('height')
+    let w = canvas.getWidth() - 2
+    text.set('top', h / 2)
+    text.set('left', w / 2)
+    text.centerH().setCoords()
+    canvas.renderAll()
   }
 
   return (
-    <div className='max-w-xl mx-auto flex flex-col p-4'>
-      <div className='flex items-center justify-center'>
-        <button
-          type='button'
-          className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800'
-          onClick={onAddCircle}
-        >
-          Add circle
-        </button>
-        <button
-          type='button'
-          className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800'
-          onClick={onAddRectangle}
-        >
-          Add Rectangle
-        </button>
+    <div className='max-w-[600px] mx-auto flex flex-col p-4 overflow-x-hidden'>
+      <div className='flex items-center justify-center my-4'>
+        <label htmlFor='keyword' className='inline-block mr-2 text-sm font-medium text-gray-900'>
+          Keyword
+        </label>
+        <input
+          type='text'
+          id='keyword'
+          className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 inline-block w-full p-2.5'
+          placeholder='Enter your keyword'
+          value={keyword}
+          onChange={onChangeKeyword}
+          onKeyPress={handleEnter}
+        />
       </div>
-      <FabricJSCanvas className='bg-gray-200 w-full h-96' onReady={onReady} />
+      <div className='bg-gray-200' style={{ width: WIDTH, height: HEIGHT }}>
+        <canvas id='canvas' className='w-full h-full relative' />
+      </div>
     </div>
   )
 }
