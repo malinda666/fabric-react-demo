@@ -8,15 +8,15 @@ export default function TheNavbar() {
 
   return (
     <p>
-      <NavLink style={({ isActive }) => activeStyle(isActive)} to="/">
+      <NavLink style={({ isActive }) => activeStyle(isActive)} to='/'>
         Home
       </NavLink>
       {` - `}
-      <NavLink style={({ isActive }) => activeStyle(isActive)} to="/product">
+      <NavLink style={({ isActive }) => activeStyle(isActive)} to='/product'>
         Product
       </NavLink>
       {` - `}
-      <NavLink to="/login">Login</NavLink>
+      <NavLink to='/login'>Login</NavLink>
     </p>
   )
 }

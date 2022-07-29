@@ -11,12 +11,12 @@ const RouteMap = () => {
       {/*start routes*/}
       <Routes>
         <Route element={<MainLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/product" element={<ProductList />} />
-          <Route path="/product/:id" element={<ProductItem />} />
+          <Route path='/' element={<Home />} />
+          <Route path='/product' element={<ProductList />} />
+          <Route path='/product/:id' element={<ProductItem />} />
         </Route>
         <Route element={<App />}>
-          <Route path="/login" element={<Login />} />
+          <Route path='/login' element={<Login />} />
         </Route>
       </Routes>
       {/*end routes*/}

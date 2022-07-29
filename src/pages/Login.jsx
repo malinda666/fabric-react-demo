@@ -8,10 +8,10 @@ function Login() {
     <div>
       <span>This login page use different layout</span>
       <p>
-        <input type="text" placeholder="Username" />
+        <input type='text' placeholder='Username' />
       </p>
       <p>
-        <input type="password" placeholder="Password" />
+        <input type='password' placeholder='Password' />
       </p>
       <button onClick={() => navigate('/')}>Go to Home</button>
     </div>
