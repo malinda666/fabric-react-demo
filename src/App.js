@@ -35,6 +35,7 @@ export default function App() {
       if (keyword === '') return
 
       createTextLayer()
+      generateGradientColor()
     }
   }
 
@@ -58,6 +59,38 @@ export default function App() {
     text.set('left', w / 2)
     text.centerH().setCoords()
     canvas.renderAll()
+  }
+
+  const generateGradientColor = () => {
+    let hexString = '0123456789abcdef'
+    let randomColor = () => {
+      let hexCode = '#'
+      for (let i = 0; i < 6; i++) {
+        hexCode += hexString[Math.floor(Math.random() * hexString.length)]
+      }
+      return hexCode
+    }
+
+    let generateGrad = () => {
+      let colorOne = randomColor()
+      let colorTwo = randomColor()
+      // let angle = Math.floor(Math.random() * 360)
+
+      const gradient = new fabric.Gradient({
+        type: 'linear',
+        gradientUnits: 'pixels',
+        coords: { x1: 0, y1: 0, x2: 0, y2: HEIGHT },
+        colorStops: [
+          { offset: 0, color: colorOne },
+          { offset: 1, color: colorTwo },
+        ],
+      })
+      canvas.setBackgroundColor(gradient)
+      canvas.renderAll()
+      // outputColor.style.background = `linear-gradient(${angle}deg, ${colorOne}, ${colorTwo})`;
+      // outputCode.value = `background: linear-gradient(${angle}deg, ${colorOne}, ${colorTwo});`;
+    }
+    generateGrad()
   }
 
   return (
