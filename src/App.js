@@ -2,7 +2,13 @@ import { useLayoutEffect, useState } from 'react'
 import { fabric } from 'fabric'
 import { useCanvas } from 'context/CanvasContext'
 
-import { BACKGROUND_COLOR, HEIGHT, WIDTH, createTextLayer, generateGradientColor } from 'lib'
+import {
+  BACKGROUND_COLOR,
+  HEIGHT,
+  WIDTH,
+  createTextLayer,
+  generateGradientColor,
+} from 'lib'
 
 export default function App() {
   const { canvas, setCanvas } = useCanvas()
@@ -39,7 +45,10 @@ export default function App() {
   return (
     <div className='max-w-[600px] mx-auto flex flex-col p-4 overflow-x-hidden'>
       <div className='flex items-center justify-center my-4'>
-        <label htmlFor='keyword' className='inline-block mr-2 text-sm font-medium text-gray-900'>
+        <label
+          htmlFor='keyword'
+          className='inline-block mr-2 text-sm font-medium text-gray-900'
+        >
           Keyword
         </label>
         <input

@@ -7,7 +7,10 @@ import {
 } from 'react'
 // import { fabric } from 'fabric'
 
-export const CanvasContext = createContext({ canvas: undefined, setCanvas: () => {} })
+export const CanvasContext = createContext({
+  canvas: undefined,
+  setCanvas: () => {},
+})
 
 export const CanvasProvider = ({ children }) => {
   const [canvas, setCanvas] = useState(null)
@@ -26,7 +29,11 @@ export const CanvasProvider = ({ children }) => {
   //   setCanvas(canvas)
   // }, [])
 
-  return <CanvasContext.Provider value={{ canvas, setCanvas }}>{children}</CanvasContext.Provider>
+  return (
+    <CanvasContext.Provider value={{ canvas, setCanvas }}>
+      {children}
+    </CanvasContext.Provider>
+  )
 }
 
 export const useCanvas = () => useContext(CanvasContext)
