@@ -45,22 +45,53 @@ export const generateGradientColor = (c, fabric) => {
     let colorOne = randomColor()
     let colorTwo = randomColor()
     let colorThree = randomColor()
-    let xAngle1 = Math.floor(Math.random() * 360)
-    let xAngle2 = Math.floor(Math.random() * 360)
-    let yAngle1 = Math.floor(Math.random() * 360)
-    // let yAngle2 = Math.floor(Math.random() * 360)
 
-    const gradient = new fabric.Gradient({
-      type: 'linear',
+    let coords
+    // let colorStops
+    let angle = 180
+
+    var textArray = ['linear', 'radial']
+
+    // const shapeColorStops = {}
+    var anglePI = -parseInt(angle, 10) * (Math.PI / 180)
+    let num = HEIGHT / 2
+    let radius = num + WIDTH / 4
+    let type = textArray[Math.floor(Math.random() * textArray.length)]
+
+    if (type == 'radial') {
+      // the numbers for my canvas are  width="1920" height="1080"
+      coords = {
+        r1: radius,
+        r2: WIDTH * 0.05,
+
+        x1: WIDTH / 2, // num + size.width/6,
+        y1: HEIGHT / 2, // num - size.height/10,
+
+        x2: WIDTH / 2, // num + size.width/6,
+        y2: HEIGHT / 2, // num - size.height/10,
+      }
+    } else {
+      console.log('trying to set linear gradient')
+      coords = {
+        x1: (Math.round(50 + Math.sin(anglePI) * 50) * WIDTH) / 100,
+        y1: (Math.round(50 + Math.cos(anglePI) * 50) * HEIGHT) / 100,
+        x2: (Math.round(50 + Math.sin(anglePI + Math.PI) * 50) * WIDTH) / 100,
+        y2: (Math.round(50 + Math.cos(anglePI + Math.PI) * 50) * HEIGHT) / 100,
+      }
+    }
+
+    const linearGradient = new fabric.Gradient({
+      type: type,
       gradientUnits: 'pixels',
-      coords: { x1: xAngle1, y1: yAngle1, x2: xAngle2, y2: HEIGHT },
+      coords: coords,
+      // coords: { x1: xAngle1, y1: yAngle1, x2: xAngle2, y2: HEIGHT },
       colorStops: [
         { offset: 0, color: colorOne },
         { offset: 0.5, color: colorTwo },
         { offset: 1, color: colorThree },
       ],
     })
-    c.setBackgroundColor(gradient)
+    c.setBackgroundColor(linearGradient)
     c.renderAll()
     // outputColor.style.background = `linear-gradient(${angle}deg, ${colorOne}, ${colorTwo})`;
     // outputCode.value = `background: linear-gradient(${angle}deg, ${colorOne}, ${colorTwo});`;
