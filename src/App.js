@@ -2,9 +2,7 @@ import { useLayoutEffect, useState } from 'react'
 import { fabric } from 'fabric'
 import { useCanvas } from 'context/CanvasContext'
 
-const BACKGROUND_COLOR = 'rgb(229 ,231, 235 ,1)'
-const WIDTH = 600
-const HEIGHT = 700
+import { BACKGROUND_COLOR, HEIGHT, WIDTH, createTextLayer, generateGradientColor } from 'lib'
 
 export default function App() {
   const { canvas, setCanvas } = useCanvas()
@@ -31,66 +29,11 @@ export default function App() {
 
   const handleEnter = (e) => {
     if (e.key === 'Enter') {
-      console.log(keyword)
       if (keyword === '') return
 
-      createTextLayer()
-      generateGradientColor()
+      createTextLayer(canvas, keyword, fabric)
+      generateGradientColor(canvas, fabric)
     }
-  }
-
-  const createTextLayer = () => {
-    canvas.setBackgroundColor(BACKGROUND_COLOR)
-    canvas.remove(...canvas.getObjects())
-    var text = new fabric.Text(keyword, {
-      left: canvas.width / 2,
-      top: canvas.height / 2,
-      fontFamily: 'Inter',
-      shadow: 'green -5px -5px 3px',
-      stroke: '#c3bfbf',
-      strokeWidth: 3,
-      textBackgroundColor: 'rgb(0,200,0)',
-      lineHeight: 0.85,
-    })
-    canvas.add(text)
-    let h = canvas.getHeight() - text.get('height')
-    let w = canvas.getWidth() - 2
-    text.set('top', h / 2)
-    text.set('left', w / 2)
-    text.centerH().setCoords()
-    canvas.renderAll()
-  }
-
-  const generateGradientColor = () => {
-    let hexString = '0123456789abcdef'
-    let randomColor = () => {
-      let hexCode = '#'
-      for (let i = 0; i < 6; i++) {
-        hexCode += hexString[Math.floor(Math.random() * hexString.length)]
-      }
-      return hexCode
-    }
-
-    let generateGrad = () => {
-      let colorOne = randomColor()
-      let colorTwo = randomColor()
-      // let angle = Math.floor(Math.random() * 360)
-
-      const gradient = new fabric.Gradient({
-        type: 'linear',
-        gradientUnits: 'pixels',
-        coords: { x1: 0, y1: 0, x2: 0, y2: HEIGHT },
-        colorStops: [
-          { offset: 0, color: colorOne },
-          { offset: 1, color: colorTwo },
-        ],
-      })
-      canvas.setBackgroundColor(gradient)
-      canvas.renderAll()
-      // outputColor.style.background = `linear-gradient(${angle}deg, ${colorOne}, ${colorTwo})`;
-      // outputCode.value = `background: linear-gradient(${angle}deg, ${colorOne}, ${colorTwo});`;
-    }
-    generateGrad()
   }
 
   return (
