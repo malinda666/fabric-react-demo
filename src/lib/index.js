@@ -31,4 +31,5 @@ export {
   clearCanvas,
   limitMovement,
   getRandomColorPalette,
+  getRandomFont,
 } from './canvasMethods'

@@ -1,5 +1,4 @@
 import {
-  randomColor,
   randomItemFromArray,
   WIDTH,
   HEIGHT,
@@ -7,12 +6,12 @@ import {
   randomNumber,
 } from './index'
 
-import { colorPalettes } from 'data/colorPalettes'
+import { fonts, colorPalettes } from 'data'
 
 const trueFalse = ['true', '']
 const fontStyles = ['italic', 'bold', 'normal']
 
-export const generateGradientColor = (c, fabric, p) => {
+export const generateGradientColor = (canvas, fabric, palette) => {
   const xAngle1 = Math.floor(Math.random() * 360)
   const xAngle2 = Math.floor(Math.random() * 360)
   const yAngle1 = Math.floor(Math.random() * 360)
@@ -46,21 +45,21 @@ export const generateGradientColor = (c, fabric, p) => {
     coords: coords,
 
     colorStops: [
-      { offset: 0, color: p[0] },
-      { offset: 0.5, color: p[1] },
-      { offset: 1, color: p[2] },
+      { offset: 0, color: palette[0] },
+      { offset: 0.5, color: palette[1] },
+      { offset: 1, color: palette[2] },
     ],
   })
-  c.setBackgroundColor(linearGradient)
-  c.renderAll()
+  canvas.setBackgroundColor(linearGradient)
+  canvas.renderAll()
 }
 
-export const clearCanvas = (c) => {
-  c.setBackgroundColor(BACKGROUND_COLOR)
-  c.remove(...c.getObjects())
+export const clearCanvas = (canvas) => {
+  canvas.setBackgroundColor(BACKGROUND_COLOR)
+  canvas.remove(...canvas.getObjects())
 }
-export const createTextLayer = (c, keyword, fabric, p) => {
-  clearCanvas(c)
+export const createTextLayer = (canvas, keyword, fabric, palette, font) => {
+  clearCanvas(canvas)
 
   const shadowType = randomItemFromArray(trueFalse)
 
@@ -69,14 +68,16 @@ export const createTextLayer = (c, keyword, fabric, p) => {
   const fontStyle = randomItemFromArray(fontStyles)
 
   const text = new fabric.Textbox(keyword, {
-    left: c.width / 2,
-    top: c.height / 2,
-    fontFamily: 'Inter',
-    fontSize: c.width / 8,
-    fill: p[3],
+    left: canvas.width / 2,
+    top: canvas.height / 2,
+    fontFamily: font || 'Inter',
+    fontSize: canvas.width / 8,
+    fill: palette[3],
     shadow:
       shadowType === ''
-        ? `${p[3]} ${randomNumber()}px ${randomNumber()}px ${randomNumber()}px`
+        ? `${
+            palette[3]
+          } ${randomNumber()}px ${randomNumber()}px ${randomNumber()}px`
         : '',
     // stroke: strokeType === '' ? '' : randomColor(),
     strokeWidth: 2,
@@ -84,10 +85,10 @@ export const createTextLayer = (c, keyword, fabric, p) => {
     textAlign: 'center',
     fontStyle: fontStyle,
     // underline: isUnderlined === '' ? false : true,
-    width: c.getWidth() - 10,
+    width: canvas.getWidth() - 10,
     fontCharacterStyle: 'Caps',
   })
-  c.add(text)
+  canvas.add(text)
   isFontGrad === ''
     ? text.set(
         'fill',
@@ -96,28 +97,32 @@ export const createTextLayer = (c, keyword, fabric, p) => {
           gradientUnits: 'pixels', // or 'percentage'
           coords: { x1: 0, y1: text.height, x2: text.width, y2: 0 },
           colorStops: [
-            { offset: 0, color: p[3] },
-            { offset: 0.2, color: p[4] },
-            { offset: 0.5, color: p[0] },
-            { offset: 0.7, color: p[1] },
-            { offset: 1, color: p[2] },
+            { offset: 0, color: palette[3] },
+            { offset: 0.3, color: palette[4] },
+            { offset: 0.5, color: palette[0] },
+            { offset: 0.7, color: palette[1] },
+            { offset: 1, color: palette[2] },
           ],
         }),
       )
-    : text.set({ fill: p[3] })
+    : text.set({ fill: palette[3] })
   // c.renderAll()
 
-  const h = c.getHeight() - text.get('height')
-  const w = c.getWidth() - 2
+  const h = canvas.getHeight() - text.get('height')
+  const w = canvas.getWidth() - 2
   text.set('top', h / 2)
   text.set('left', w / 2)
-  limitMovement(text, c)
+  limitMovement(text, canvas)
   text.centerH().setCoords()
-  c.renderAll()
+  canvas.renderAll()
 }
 
 export const getRandomColorPalette = () => {
   return randomItemFromArray(colorPalettes)
+}
+
+export const getRandomFont = () => {
+  return randomItemFromArray(fonts)
 }
 
 export const limitMovement = (obj, c) => {

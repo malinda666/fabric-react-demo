@@ -1,9 +1,9 @@
 import { useLayoutEffect, useState } from 'react'
 import { fabric } from 'fabric'
+import * as WF from 'webfontloader'
+
 import { useCanvas } from 'context/CanvasContext'
-
 import { Spinner } from 'components'
-
 import {
   BACKGROUND_COLOR,
   HEIGHT,
@@ -12,14 +12,13 @@ import {
   generateGradientColor,
   limitMovement,
   getRandomColorPalette,
+  getRandomFont,
 } from 'lib'
-
-import { colorPalettes } from 'data/colorPalettes'
+import { fonts } from 'data'
 
 export default function App() {
   const { canvas, setCanvas, setLoading, isLoading } = useCanvas()
   const [keyword, setKeyword] = useState('')
-  const [palette, setPalette] = useState(colorPalettes[0])
 
   useLayoutEffect(() => {
     if (canvas) return
@@ -42,6 +41,22 @@ export default function App() {
       limitMovement(obj)
     })
   }, [])
+  useLayoutEffect(() => {
+    setLoading(true)
+    const list = fonts.map((item) => item.value)
+    setTimeout(() => {
+      WF.load({
+        google: {
+          families: list,
+        },
+        active: () => {
+          sessionStorage.fonts = true
+          setLoading(false)
+          // console.clear();
+        },
+      })
+    }, 100)
+  }, [])
 
   const onChangeKeyword = (e) => {
     setKeyword(e.target.value)
@@ -53,9 +68,9 @@ export default function App() {
       setLoading(true)
       let kw = keyword
       kw = kw[0].toUpperCase() + kw.substring(1)
-      setPalette(getRandomColorPalette())
+      const palette = getRandomColorPalette()
       setTimeout(() => {
-        createTextLayer(canvas, kw, fabric, palette)
+        createTextLayer(canvas, kw, fabric, palette, getRandomFont().name)
         generateGradientColor(canvas, fabric, palette)
         setLoading(false)
       }, 100)
