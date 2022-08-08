@@ -11,11 +11,15 @@ import {
   createTextLayer,
   generateGradientColor,
   limitMovement,
+  getRandomColorPalette,
 } from 'lib'
+
+import { colorPalettes } from 'data/colorPalettes'
 
 export default function App() {
   const { canvas, setCanvas, setLoading, isLoading } = useCanvas()
   const [keyword, setKeyword] = useState('')
+  const [palette, setPalette] = useState(colorPalettes[0])
 
   useLayoutEffect(() => {
     if (canvas) return
@@ -49,9 +53,10 @@ export default function App() {
       setLoading(true)
       let kw = keyword
       kw = kw[0].toUpperCase() + kw.substring(1)
+      setPalette(getRandomColorPalette())
       setTimeout(() => {
-        createTextLayer(canvas, kw, fabric)
-        generateGradientColor(canvas, fabric)
+        createTextLayer(canvas, kw, fabric, palette)
+        generateGradientColor(canvas, fabric, palette)
         setLoading(false)
       }, 100)
     }

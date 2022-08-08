@@ -7,13 +7,12 @@ import {
   randomNumber,
 } from './index'
 
+import { colorPalettes } from 'data/colorPalettes'
+
 const trueFalse = ['true', '']
 const fontStyles = ['italic', 'bold', 'normal']
 
-export const generateGradientColor = (c, fabric) => {
-  const colorOne = randomColor()
-  const colorTwo = randomColor()
-  const colorThree = randomColor()
+export const generateGradientColor = (c, fabric, p) => {
   const xAngle1 = Math.floor(Math.random() * 360)
   const xAngle2 = Math.floor(Math.random() * 360)
   const yAngle1 = Math.floor(Math.random() * 360)
@@ -47,9 +46,9 @@ export const generateGradientColor = (c, fabric) => {
     coords: coords,
 
     colorStops: [
-      { offset: 0, color: colorOne },
-      { offset: 0.5, color: colorTwo },
-      { offset: 1, color: colorThree },
+      { offset: 0, color: p[0] },
+      { offset: 0.5, color: p[1] },
+      { offset: 1, color: p[2] },
     ],
   })
   c.setBackgroundColor(linearGradient)
@@ -60,16 +59,10 @@ export const clearCanvas = (c) => {
   c.setBackgroundColor(BACKGROUND_COLOR)
   c.remove(...c.getObjects())
 }
-export const createTextLayer = (c, keyword, fabric) => {
+export const createTextLayer = (c, keyword, fabric, p) => {
   clearCanvas(c)
 
-  const xAngle1 = Math.floor(Math.random() * 360)
-  const xAngle2 = Math.floor(Math.random() * 360)
-  const yAngle1 = Math.floor(Math.random() * 360)
-
   const shadowType = randomItemFromArray(trueFalse)
-  const strokeType = randomItemFromArray(trueFalse)
-  const isUnderlined = randomItemFromArray(trueFalse)
 
   const isFontGrad = randomItemFromArray(trueFalse)
 
@@ -80,10 +73,10 @@ export const createTextLayer = (c, keyword, fabric) => {
     top: c.height / 2,
     fontFamily: 'Inter',
     fontSize: c.width / 8,
-    fill: randomColor(),
+    fill: p[3],
     shadow:
       shadowType === ''
-        ? `${randomColor()} ${randomNumber()}px ${randomNumber()}px ${randomNumber()}px`
+        ? `${p[3]} ${randomNumber()}px ${randomNumber()}px ${randomNumber()}px`
         : '',
     // stroke: strokeType === '' ? '' : randomColor(),
     strokeWidth: 2,
@@ -103,16 +96,15 @@ export const createTextLayer = (c, keyword, fabric) => {
           gradientUnits: 'pixels', // or 'percentage'
           coords: { x1: 0, y1: text.height, x2: text.width, y2: 0 },
           colorStops: [
-            { offset: 0, color: randomColor() },
-            { offset: 0.2, color: randomColor() },
-            { offset: 0.4, color: randomColor() },
-            { offset: 0.6, color: randomColor() },
-            { offset: 0.8, color: randomColor() },
-            { offset: 1, color: randomColor() },
+            { offset: 0, color: p[3] },
+            { offset: 0.2, color: p[4] },
+            { offset: 0.5, color: p[0] },
+            { offset: 0.7, color: p[1] },
+            { offset: 1, color: p[2] },
           ],
         }),
       )
-    : text.set({ fill: randomColor() })
+    : text.set({ fill: p[3] })
   // c.renderAll()
 
   const h = c.getHeight() - text.get('height')
@@ -123,6 +115,11 @@ export const createTextLayer = (c, keyword, fabric) => {
   text.centerH().setCoords()
   c.renderAll()
 }
+
+export const getRandomColorPalette = () => {
+  return randomItemFromArray(colorPalettes)
+}
+
 export const limitMovement = (obj, c) => {
   if (obj && obj.get('type') === 'textbox') {
     if (obj.height > c.height || obj.width > c.width) {

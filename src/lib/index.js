@@ -30,4 +30,5 @@ export {
   createTextLayer,
   clearCanvas,
   limitMovement,
+  getRandomColorPalette,
 } from './canvasMethods'
