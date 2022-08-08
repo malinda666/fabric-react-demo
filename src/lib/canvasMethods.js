@@ -138,10 +138,7 @@ export const createBackground = (canvas, fabricCanvas, fabric, palette) => {
   if (isPattern === '') {
     createBackgroundPatterns(
       fabric,
-      fabricCanvas,
       '/assets/patterns/escheresque_ste.png',
-      // '/assets/patterns/escheresque_ste.png',
-      shape,
     ).then((res) => {
       console.log(res)
       shape.set('fill', res)
@@ -206,7 +203,7 @@ export const createBackgroundGradient = (fabric, palette) => {
   })
 }
 
-export const createBackgroundPatterns = (fabric, canvas, url, obj) => {
+export const createBackgroundPatterns = (fabric, url) => {
   let pattern
 
   return new Promise((resolve, reject) => {
@@ -218,19 +215,6 @@ export const createBackgroundPatterns = (fabric, canvas, url, obj) => {
         })
         resolve(pattern)
       })
-
-      // const imgURL = '/assets/patterns/nasty_fabric.png'
-
-      // const pugImg = new Image()
-      // pugImg.onload = function (img) {
-      //   pattern = new fabric.Pattern({
-      //     source: img,
-      //     repeat: 'repeat',
-      //   })
-      //   console.log(pattern, 'inner')
-      //   obj.set('fill', pattern)
-      // }
-      // pugImg.src = url
     } catch (error) {
       console.log(error)
       reject(error)
