@@ -11,7 +11,11 @@ import { fonts, colorPalettes } from 'data'
 const trueFalse = ['true', '']
 const fontStyles = ['italic', 'bold', 'normal']
 
-export const generateGradientColor = (canvas, fabric, palette) => {
+export const clearCanvas = (canvas) => {
+  canvas.setBackgroundColor(BACKGROUND_COLOR)
+  canvas.remove(...canvas.getObjects())
+}
+export const createGradientBackground = (canvas, fabric, palette) => {
   const xAngle1 = Math.floor(Math.random() * 360)
   const xAngle2 = Math.floor(Math.random() * 360)
   const yAngle1 = Math.floor(Math.random() * 360)
@@ -54,10 +58,6 @@ export const generateGradientColor = (canvas, fabric, palette) => {
   canvas.renderAll()
 }
 
-export const clearCanvas = (canvas) => {
-  canvas.setBackgroundColor(BACKGROUND_COLOR)
-  canvas.remove(...canvas.getObjects())
-}
 export const createTextLayer = (canvas, keyword, fabric, palette, font) => {
   clearCanvas(canvas)
 
@@ -115,12 +115,127 @@ export const createTextLayer = (canvas, keyword, fabric, palette, font) => {
   canvas.renderAll()
 }
 
+export const createCanvasFilters = (canvas) => {
+  const ctx = canvas.getContext('2d')
+
+  ctx.filter = 'blur(4px)'
+}
+
+export const createBackground = (canvas, fabricCanvas, fabric, palette) => {
+  // get 2d context of our canvas
+  const ctx = canvas.getContext('2d')
+  const isPattern = randomItemFromArray(trueFalse)
+
+  const shape = new fabric.Rect({
+    width: WIDTH,
+    height: HEIGHT,
+    left: 0,
+    top: 0,
+    selectable: false,
+    evented: false,
+  })
+
+  if (isPattern === '') {
+    createBackgroundPatterns(
+      fabric,
+      fabricCanvas,
+      '/assets/patterns/escheresque_ste.png',
+      // '/assets/patterns/escheresque_ste.png',
+      shape,
+    ).then((res) => {
+      console.log(res)
+      shape.set('fill', res)
+      fabricCanvas.add(shape)
+      fabricCanvas.sendToBack(shape)
+      fabricCanvas.renderAll()
+    })
+  } else {
+    shape.set('fill', createBackgroundGradient(fabric, palette))
+    fabricCanvas.add(shape)
+    fabricCanvas.sendToBack(shape)
+    fabricCanvas.renderAll()
+  }
+}
+
 export const getRandomColorPalette = () => {
   return randomItemFromArray(colorPalettes)
 }
 
 export const getRandomFont = () => {
   return randomItemFromArray(fonts)
+}
+
+export const createBackgroundGradient = (fabric, palette) => {
+  const xAngle1 = Math.floor(Math.random() * 360)
+  const xAngle2 = Math.floor(Math.random() * 360)
+  const yAngle1 = Math.floor(Math.random() * 360)
+
+  let coords
+
+  const types = ['linear', 'radial']
+
+  const num = HEIGHT / 2
+  const radius = num + WIDTH / 4
+  const type = randomItemFromArray(types)
+
+  if (type == 'radial') {
+    coords = {
+      r1: radius,
+      r2: WIDTH * 0.05,
+
+      x1: WIDTH / 2,
+      y1: HEIGHT / 2,
+
+      x2: WIDTH / 2,
+      y2: HEIGHT / 2,
+    }
+  } else {
+    coords = { x1: xAngle1, y1: yAngle1, x2: xAngle2, y2: HEIGHT }
+  }
+
+  return new fabric.Gradient({
+    type: type,
+    gradientUnits: 'pixels',
+    coords: coords,
+
+    colorStops: [
+      { offset: 0, color: palette[0] },
+      { offset: 0.5, color: palette[1] },
+      { offset: 1, color: palette[2] },
+    ],
+  })
+}
+
+export const createBackgroundPatterns = (fabric, canvas, url, obj) => {
+  let pattern
+
+  return new Promise((resolve, reject) => {
+    try {
+      fabric.util.loadImage(url, (img) => {
+        pattern = new fabric.Pattern({
+          source: img,
+          repeat: 'repeat',
+        })
+        resolve(pattern)
+      })
+
+      // const imgURL = '/assets/patterns/nasty_fabric.png'
+
+      // const pugImg = new Image()
+      // pugImg.onload = function (img) {
+      //   pattern = new fabric.Pattern({
+      //     source: img,
+      //     repeat: 'repeat',
+      //   })
+      //   console.log(pattern, 'inner')
+      //   obj.set('fill', pattern)
+      // }
+      // pugImg.src = url
+    } catch (error) {
+      console.log(error)
+      reject(error)
+    }
+  })
 }
 
 export const limitMovement = (obj, c) => {

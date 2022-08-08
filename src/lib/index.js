@@ -26,8 +26,10 @@ export const randomNumber = () => {
 }
 
 export {
-  generateGradientColor,
+  createGradientBackground,
   createTextLayer,
+  createCanvasFilters,
+  createBackground,
   clearCanvas,
   limitMovement,
   getRandomColorPalette,

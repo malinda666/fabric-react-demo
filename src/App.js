@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from 'react'
+import { useLayoutEffect, useState, useRef } from 'react'
 import { fabric } from 'fabric'
 import * as WF from 'webfontloader'
 
@@ -9,7 +9,9 @@ import {
   HEIGHT,
   WIDTH,
   createTextLayer,
-  generateGradientColor,
+  createGradientBackground,
+  createCanvasFilters,
+  createBackground,
   limitMovement,
   getRandomColorPalette,
   getRandomFont,
@@ -17,6 +19,7 @@ import {
 import { fonts } from 'data'
 
 export default function App() {
+  const canvasRef = useRef()
   const { canvas, setCanvas, setLoading, isLoading } = useCanvas()
   const [keyword, setKeyword] = useState('')
 
@@ -30,6 +33,8 @@ export default function App() {
       stopContextMenu: true,
       backgroundColor: BACKGROUND_COLOR,
       backgroundImage: undefined,
+      preserveObjectStacking: true,
+      perPixelTargetFind: false,
     })
     _canvas.requestRenderAll()
     setCanvas(_canvas)
@@ -71,7 +76,9 @@ export default function App() {
       const palette = getRandomColorPalette()
       setTimeout(() => {
         createTextLayer(canvas, kw, fabric, palette, getRandomFont().name)
-        generateGradientColor(canvas, fabric, palette)
+        // createGradientBackground(canvas, fabric, palette)
+        // createCanvasFilters(canvasRef.current)
+        createBackground(canvasRef.current, canvas, fabric, palette)
         setLoading(false)
       }, 100)
     }
@@ -99,7 +106,11 @@ export default function App() {
           <div className='ml-4'>{isLoading && <Spinner type='dark' />}</div>
         </div>
         <div className='bg-gray-200' style={{ width: WIDTH, height: HEIGHT }}>
-          <canvas id='canvas' className='w-full h-full relative' />
+          <canvas
+            id='canvas'
+            className='w-full h-full relative'
+            ref={canvasRef}
+          />
         </div>
       </div>
     </>
