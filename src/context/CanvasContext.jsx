@@ -1,36 +1,21 @@
 /* eslint-disable react/prop-types */
-import {
-  createContext,
-  useContext,
-  useState,
-  // useEffect
-} from 'react'
-// import { fabric } from 'fabric'
+import { createContext, useContext, useState } from 'react'
 
 export const CanvasContext = createContext({
   canvas: undefined,
   setCanvas: () => {},
+  isLoading: false,
+  setLoading: () => {},
 })
 
 export const CanvasProvider = ({ children }) => {
   const [canvas, setCanvas] = useState(null)
-
-  // useEffect(() => {
-  //   const canvas = new fabric.Canvas('canvas', {
-  //     height: 600,
-  //     width: 800,
-  //     fireRightClick: true,
-  //     fireMiddleClick: true,
-  //     stopContextMenu: true,
-  //     backgroundColor: undefined,
-  //     backgroundImage: undefined,
-  //   })
-  //   canvas.requestRenderAll()
-  //   setCanvas(canvas)
-  // }, [])
+  const [isLoading, setLoading] = useState(false)
 
   return (
-    <CanvasContext.Provider value={{ canvas, setCanvas }}>
+    <CanvasContext.Provider
+      value={{ canvas, setCanvas, isLoading, setLoading }}
+    >
       {children}
     </CanvasContext.Provider>
   )

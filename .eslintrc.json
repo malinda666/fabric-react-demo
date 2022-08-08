@@ -20,6 +20,7 @@
     "no-duplicate-imports": "error",
     "no-unused-vars": "warn",
     "prefer-const": "error",
-    "no-var": "error"
+    "no-var": "error",
+    "react/prop-types": "off"
   }
 }

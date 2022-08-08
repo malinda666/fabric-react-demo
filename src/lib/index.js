@@ -29,4 +29,5 @@ export {
   generateGradientColor,
   createTextLayer,
   clearCanvas,
+  limitMovement,
 } from './canvasMethods'
