@@ -18,11 +18,11 @@ export const generateGradientColor = (canvas, fabric, palette) => {
 
   let coords
 
-  const textArray = ['linear', 'radial']
+  const types = ['linear', 'radial']
 
   const num = HEIGHT / 2
   const radius = num + WIDTH / 4
-  const type = randomItemFromArray(textArray)
+  const type = randomItemFromArray(types)
 
   if (type == 'radial') {
     coords = {
@@ -62,9 +62,7 @@ export const createTextLayer = (canvas, keyword, fabric, palette, font) => {
   clearCanvas(canvas)
 
   const shadowType = randomItemFromArray(trueFalse)
-
   const isFontGrad = randomItemFromArray(trueFalse)
-
   const fontStyle = randomItemFromArray(fontStyles)
 
   const text = new fabric.Textbox(keyword, {
