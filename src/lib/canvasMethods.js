@@ -6,10 +6,13 @@ import {
   randomNumber,
 } from './index'
 
+import { createArc, createLine } from './patternMethods'
+
 import { fonts, colorPalettes, patterns } from 'data'
 
 const trueFalse = ['true', '']
 const fontStyles = ['italic', 'bold', 'normal']
+const patternsArray = ['arc', 'line']
 
 export const clearCanvas = (canvas) => {
   canvas.setBackgroundColor(BACKGROUND_COLOR)
@@ -122,8 +125,9 @@ export const createCanvasFilters = (canvas) => {
 }
 
 export const createBackground = (canvas, fabricCanvas, fabric, palette) => {
-  // get 2d context of our canvas
+  // get 2d ctx of our canvas
   const ctx = canvas.getContext('2d')
+  // const isPattern = ''
   const isPattern = randomItemFromArray(trueFalse)
 
   const shape = new fabric.Rect({
@@ -136,12 +140,11 @@ export const createBackground = (canvas, fabricCanvas, fabric, palette) => {
   })
 
   if (isPattern === '') {
-    createBackgroundPatterns(fabric).then((res) => {
-      shape.set('fill', res)
-      fabricCanvas.add(shape)
-      fabricCanvas.sendToBack(shape)
-      fabricCanvas.renderAll()
-    })
+    console.log('patern')
+    shape.set('fill', createBackgroundPatterns(fabric, fabricCanvas, palette))
+    fabricCanvas.add(shape)
+    fabricCanvas.sendToBack(shape)
+    fabricCanvas.renderAll()
   } else {
     shape.set('fill', createBackgroundGradient(fabric, palette))
     fabricCanvas.add(shape)
@@ -199,24 +202,71 @@ export const createBackgroundGradient = (fabric, palette) => {
   })
 }
 
-export const createBackgroundPatterns = (fabric) => {
-  let pattern
-  const url = randomItemFromArray(patterns)
+export const createBackgroundPatterns = (fabric, canvas, palette) => {
+  const p = randomItemFromArray(patternsArray)
 
-  return new Promise((resolve, reject) => {
-    try {
-      fabric.util.loadImage(`/assets/patterns/${url}`, (img) => {
-        pattern = new fabric.Pattern({
-          source: img,
-          repeat: 'repeat',
-        })
-        resolve(pattern)
-      })
-    } catch (error) {
-      console.log(error)
-      reject(error)
+  const renderPattern = (p, ctx) => {
+    switch (p) {
+      case 'arc':
+        createArc(ctx)
+        break
+      case 'line':
+        createLine(ctx)
+        break
+
+      default:
+        break
     }
+  }
+
+  const Cross = fabric.util.createClass(fabric.Object, {
+    objectCaching: false,
+    initialize: function (options) {
+      this.callSuper('initialize', options)
+      this.animDirection = 'up'
+
+      this.width = 5
+      this.height = 5
+
+      this.w1 = this.h2 = 5
+      this.h1 = this.w2 = 2
+    },
+
+    _render: function (ctx) {
+      // ctx.fillRect(-this.w1 / 2, -this.h1 / 2, this.w1, this.h1)
+      // ctx.fillRect(-this.w2 / 2, -this.h2 / 2, this.w2, this.h2)
+      ctx.fillStyle = palette[2]
+      ctx.strokeStyle = palette[4]
+
+      renderPattern(p, ctx)
+
+      ctx.stroke()
+      ctx.fill()
+    },
   })
+
+  // const c = new Cross({
+  //   top: 0,
+  //   left: 0,
+  //   selectable: false,
+  //   evented: false,
+  //   backgroundColor: palette[3],
+  // })
+  // canvas.add(c)
+  // canvas.sendToBack(c)
+  for (let i = 50; i >= 0; i--) {
+    for (let j = 0; j < 50; j++) {
+      const c = new Cross({
+        top: 25 * i,
+        left: 25 * j,
+        selectable: false,
+        evented: false,
+        // backgroundColor: palette[3],
+      })
+      canvas.add(c)
+      canvas.sendToBack(c)
+    }
+  }
 }
 
 export const limitMovement = (obj, c) => {
@@ -294,3 +344,30 @@ const scaletextbox = (c) => {
     c.renderAll()
   }
 }
+
+// function resetParticle(p) {
+//   p = p || {}
+//   const scale = Math.min(WIDTH, HEIGHT) / 2
+//   p.position = randomSphere([], random(0, scale * startArea))
+//   p.position[0] += WIDTH / 2
+//   p.position[1] += HEIGHT / 2
+//   p.radius = random(0.01, maxRadius)
+//   p.duration = random(1, 500)
+//   p.time = random(0, p.duration)
+//   p.velocity = [random(-1, 1), random(-1, 1)]
+//   p.speed = random(0.5, 2) * dpr
+
+//   // Note: We actually include the background color here.
+//   // This means some strokes may seem to "erase" the other
+//   // colours, which can add a nice effect.
+//   p.color = palette[Math.floor(random(palette.length))]
+//   return p
+// }
+
+// function randomSphere(out, scale) {
+//   scale = scale || 1.0
+//   const r = randFunc() * 2.0 * Math.PI
+//   out[0] = Math.cos(r) * scale
+//   out[1] = Math.sin(r) * scale
+//   return out
+// }

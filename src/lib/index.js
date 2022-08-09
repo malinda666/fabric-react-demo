@@ -18,11 +18,11 @@ export const randomItemFromArray = (arr) => {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
-export const randomNumber = () => {
-  const min = -10
-  const max = 10
+export const randomNumber = (min, max) => {
+  const _min = min || -10
+  const _max = max || 10
   // and the formula is:
-  return Math.floor(Math.random() * (max - min + 1)) + min
+  return Math.floor(Math.random() * (_max - _min + 1)) + _min
 }
 
 export {
