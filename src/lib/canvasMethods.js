@@ -6,13 +6,27 @@ import {
   randomNumber,
 } from './index'
 
-import { createArc, createLine, createCurvedLine } from './patternMethods'
+import {
+  createArc,
+  createLine,
+  createTriangle,
+  createSpiral,
+  createNoise,
+  createNoiseWaves,
+} from './patternMethods'
 
 import { fonts, colorPalettes, patterns } from 'data'
 
 const trueFalse = ['true', '']
 const fontStyles = ['italic', 'bold', 'normal']
-const patternsArray = ['arc', 'line', 'curvedLine']
+const patternsArray = [
+  'arc',
+  'line',
+  'tri',
+  // 'spiral',
+  // 'noise',
+  'noisewaves',
+]
 
 export const clearCanvas = (canvas) => {
   canvas.setBackgroundColor(BACKGROUND_COLOR)
@@ -115,6 +129,7 @@ export const createTextLayer = (canvas, keyword, fabric, palette, font) => {
   text.set('left', w / 2)
   limitMovement(text, canvas)
   text.centerH().setCoords()
+  canvas.bringToFront(text)
   canvas.renderAll()
 }
 
@@ -125,8 +140,6 @@ export const createCanvasFilters = (canvas) => {
 }
 
 export const createBackground = (canvas, fabricCanvas, fabric, palette) => {
-  // get 2d ctx of our canvas
-  const ctx = canvas.getContext('2d')
   // const isPattern = ''
   const isPattern = randomItemFromArray(trueFalse)
 
@@ -140,7 +153,6 @@ export const createBackground = (canvas, fabricCanvas, fabric, palette) => {
   })
 
   if (isPattern === '') {
-    console.log('patern')
     shape.set('fill', createBackgroundPatterns(fabric, fabricCanvas, palette))
     fabricCanvas.add(shape)
     fabricCanvas.sendToBack(shape)
@@ -202,25 +214,34 @@ export const createBackgroundGradient = (fabric, palette) => {
   })
 }
 
+const renderPattern = (p, ctx) => {
+  switch (p) {
+    case 'arc':
+      createArc(ctx)
+      break
+    case 'line':
+      createLine(ctx)
+      break
+
+    case 'tri':
+      createTriangle(ctx)
+      break
+    case 'spiral':
+      createSpiral(ctx)
+      break
+    // case 'noise':
+    //   createNoise(ctx)
+    //   break
+    case 'noisewaves':
+      createNoiseWaves(ctx)
+      break
+
+    default:
+      break
+  }
+}
 export const createBackgroundPatterns = (fabric, canvas, palette) => {
   const p = randomItemFromArray(patternsArray)
-
-  const renderPattern = (p, ctx) => {
-    switch (p) {
-      case 'arc':
-        createArc(ctx)
-        break
-      case 'line':
-        createLine(ctx)
-        break
-      case 'curvedLine':
-        createCurvedLine(ctx)
-        break
-
-      default:
-        break
-    }
-  }
 
   const Cross = fabric.util.createClass(fabric.Object, {
     objectCaching: false,
@@ -236,38 +257,58 @@ export const createBackgroundPatterns = (fabric, canvas, palette) => {
     },
 
     _render: function (ctx) {
+      ctx.globalAlpha = 0.5
       // ctx.fillRect(-this.w1 / 2, -this.h1 / 2, this.w1, this.h1)
       // ctx.fillRect(-this.w2 / 2, -this.h2 / 2, this.w2, this.h2)
-      ctx.fillStyle = palette[2]
-      ctx.strokeStyle = palette[4]
+      const gradient = ctx.createLinearGradient(0, 0, 200, 0)
+      gradient.addColorStop(
+        0,
+        randomItemFromArray([palette[0], palette[2], palette[1]]),
+      )
+      gradient.addColorStop(
+        0.5,
+        randomItemFromArray([palette[0], palette[2], palette[1]]),
+      )
+      gradient.addColorStop(
+        1,
+        randomItemFromArray([palette[0], palette[2], palette[1]]),
+      )
+      ctx.fillStyle = gradient
+
+      // ctx.fillStyle = randomItemFromArray([palette[0], palette[2], palette[1]])
+      ctx.strokeStyle = randomItemFromArray([
+        palette[0],
+        palette[2],
+        palette[1],
+      ])
 
       renderPattern(p, ctx)
-
-      ctx.stroke()
-      ctx.fill()
     },
   })
 
-  // const c = new Cross({
-  //   top: 0,
-  //   left: 0,
-  //   selectable: false,
-  //   evented: false,
-  //   backgroundColor: palette[3],
-  // })
-  // canvas.add(c)
-  // canvas.sendToBack(c)
-  for (let i = 50; i >= 0; i--) {
-    for (let j = 0; j < 50; j++) {
-      const c = new Cross({
-        top: 25 * i,
-        left: 25 * j,
-        selectable: false,
-        evented: false,
-        // backgroundColor: palette[3],
-      })
-      canvas.add(c)
-      canvas.sendToBack(c)
+  if (p.includes('noise')) {
+    const c = new Cross({
+      top: 0,
+      left: 0,
+      selectable: false,
+      evented: false,
+      backgroundColor: palette[3],
+    })
+    canvas.add(c)
+    canvas.sendToBack(c)
+  } else {
+    for (let i = 50; i >= 0; i--) {
+      for (let j = 0; j < 50; j++) {
+        const c = new Cross({
+          top: 25 * i,
+          left: 25 * j,
+          selectable: false,
+          evented: false,
+          // backgroundColor: palette[3],
+        })
+        canvas.add(c)
+        canvas.sendToBack(c)
+      }
     }
   }
 }
