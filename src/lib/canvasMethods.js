@@ -6,7 +6,7 @@ import {
   randomNumber,
 } from './index'
 
-import { fonts, colorPalettes } from 'data'
+import { fonts, colorPalettes, patterns } from 'data'
 
 const trueFalse = ['true', '']
 const fontStyles = ['italic', 'bold', 'normal']
@@ -136,11 +136,7 @@ export const createBackground = (canvas, fabricCanvas, fabric, palette) => {
   })
 
   if (isPattern === '') {
-    createBackgroundPatterns(
-      fabric,
-      '/assets/patterns/escheresque_ste.png',
-    ).then((res) => {
-      console.log(res)
+    createBackgroundPatterns(fabric).then((res) => {
       shape.set('fill', res)
       fabricCanvas.add(shape)
       fabricCanvas.sendToBack(shape)
@@ -203,12 +199,13 @@ export const createBackgroundGradient = (fabric, palette) => {
   })
 }
 
-export const createBackgroundPatterns = (fabric, url) => {
+export const createBackgroundPatterns = (fabric) => {
   let pattern
+  const url = randomItemFromArray(patterns)
 
   return new Promise((resolve, reject) => {
     try {
-      fabric.util.loadImage(url, (img) => {
+      fabric.util.loadImage(`/assets/patterns/${url}`, (img) => {
         pattern = new fabric.Pattern({
           source: img,
           repeat: 'repeat',
