@@ -6,13 +6,13 @@ import {
   randomNumber,
 } from './index'
 
-import { createArc, createLine } from './patternMethods'
+import { createArc, createLine, createCurvedLine } from './patternMethods'
 
 import { fonts, colorPalettes, patterns } from 'data'
 
 const trueFalse = ['true', '']
 const fontStyles = ['italic', 'bold', 'normal']
-const patternsArray = ['arc', 'line']
+const patternsArray = ['arc', 'line', 'curvedLine']
 
 export const clearCanvas = (canvas) => {
   canvas.setBackgroundColor(BACKGROUND_COLOR)
@@ -212,6 +212,9 @@ export const createBackgroundPatterns = (fabric, canvas, palette) => {
         break
       case 'line':
         createLine(ctx)
+        break
+      case 'curvedLine':
+        createCurvedLine(ctx)
         break
 
       default:
