@@ -221,3 +221,81 @@ export const specks = (ctx, palette) => {
     ctx.restore()
   }
 }
+
+export const tiledLines = (ctx, palette) => {
+  const step = randomNumber(5, 25)
+  ctx.strokeStyle = randomItemFromArray(palette)
+  ctx.fillStyle = randomItemFromArray(palette)
+  ctx.lineWidth = 2
+  ctx.lineCap = 'square'
+  ctx.beginPath()
+
+  for (let x = 0; x <= WIDTH; x += step) {
+    for (let y = 0; y <= HEIGHT; y += step) {
+      if (Math.random() >= 0.5) {
+        ctx.moveTo(x, y)
+        ctx.lineTo(x + step, y + step)
+      } else {
+        ctx.moveTo(x + step, y)
+        ctx.lineTo(x, y + step)
+      }
+    }
+  }
+
+  ctx.stroke()
+  ctx.fill()
+}
+
+export const circuit = (ctx, palette) => {
+  const size = WIDTH
+
+  const circleSize = 4
+  const step = 20
+  const iterations = size
+
+  const lines = []
+
+  function addCircle(x, y, color) {
+    ctx.beginPath()
+    // arc(x, y, radius, startAngle, endAngle, anticlockwise)
+    ctx.arc(x, y, circleSize, 0, Math.PI * 2)
+    ctx.fillStyle = randomItemFromArray(palette)
+    ctx.fill()
+    ctx.strokeStyle = color
+    ctx.stroke()
+  }
+
+  function draw(x, y, width, height) {
+    const leftToRight = Math.random() > 0.5
+    ctx.strokeStyle = randomItemFromArray(palette)
+
+    if (leftToRight) {
+      ctx.beginPath()
+      ctx.moveTo(x, y)
+      ctx.lineTo(x + width, y + height)
+      ctx.stroke()
+    } else {
+      ctx.beginPath()
+      ctx.moveTo(x + width, y)
+      ctx.lineTo(x, y + height)
+      ctx.stroke()
+    }
+
+    if (x > 5 && y > 5) {
+      addCircle(
+        x,
+        y,
+        leftToRight
+          ? randomItemFromArray(palette)
+          : randomItemFromArray(palette),
+      )
+    }
+  }
+  // draw(0, 0, size, size)
+
+  for (let x = 0; x < iterations; x += step) {
+    for (let y = 0; y < iterations; y += step) {
+      draw(x, y, step, step)
+    }
+  }
+}

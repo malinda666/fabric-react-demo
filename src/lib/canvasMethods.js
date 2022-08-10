@@ -14,6 +14,8 @@ import {
   bauhaus,
   voronoi,
   specks,
+  tiledLines,
+  circuit,
 } from './patternMethods'
 
 import { fonts, colorPalettes } from 'data'
@@ -28,6 +30,8 @@ const patternsArray = [
   'bauhausnoise',
   'voronoinoise',
   'specksnoise',
+  'linesnoise',
+  'circuitnoise',
 ]
 
 export const clearCanvas = (canvas) => {
@@ -135,8 +139,8 @@ export const createTextLayer = (canvas, keyword, fabric, palette, font) => {
 }
 
 export const createBackground = (canvas, fabricCanvas, fabric, palette) => {
-  const isPattern = ''
-  // const isPattern = randomItemFromArray(trueFalse)
+  // const isPattern = ''
+  const isPattern = randomItemFromArray(trueFalse)
 
   const shape = new fabric.Rect({
     width: WIDTH,
@@ -234,6 +238,12 @@ const renderPattern = (p, ctx, palette) => {
       break
     case 'specksnoise':
       specks(ctx, palette)
+      break
+    case 'linesnoise':
+      tiledLines(ctx, palette)
+      break
+    case 'circuitnoise':
+      circuit(ctx, palette)
       break
 
     default:
