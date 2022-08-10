@@ -1,7 +1,13 @@
 import { createNoise3D } from 'simplex-noise'
 import { createVoronoiTessellation } from '@georgedoescode/generative-utils'
 
-import { randomItemFromArray, WIDTH, HEIGHT, randomNumber } from './index'
+import {
+  randomItemFromArray,
+  WIDTH,
+  HEIGHT,
+  randomNumber,
+  randomColor,
+} from './index'
 
 import { circle, arc, triangle, rectangle } from './shapeBuilders'
 
@@ -298,4 +304,229 @@ export const circuit = (ctx, palette) => {
       draw(x, y, step, step)
     }
   }
+}
+
+export const dark = (ctx, palette) => {
+  const size = WIDTH
+  const dpr = window.devicePixelRatio
+  // ctx.width = size * dpr
+  // ctx.height = size * dpr
+  ctx.scale(dpr, dpr)
+
+  ctx.lineWidth = 2
+  ctx.lineCap = 'round'
+
+  const step = 20
+  const aThirdOfHeight = size / 3
+
+  function draw(x, y, width, height, positions) {
+    ctx.save()
+    ctx.translate(x + width / 2, y + height / 2)
+    ctx.rotate(Math.random() * 5)
+    ctx.translate(-width / 2, -height / 2)
+
+    for (let i = 0; i <= positions.length; i++) {
+      ctx.beginPath()
+      ctx.moveTo(positions[i] * width, 0)
+      ctx.lineTo(positions[i] * width, height)
+      ctx.stroke()
+    }
+
+    ctx.restore()
+  }
+
+  for (let y = step; y < size - step; y += step) {
+    for (let x = step; x < size - step; x += step) {
+      if (y < aThirdOfHeight) {
+        draw(x, y, step, step, [0.5])
+      } else if (y < aThirdOfHeight * 2) {
+        draw(x, y, step, step, [0.2, 0.8])
+      } else {
+        draw(x, y, step, step, [0.1, 0.5, 0.9])
+      }
+    }
+  }
+}
+
+export const bauhaus2 = (ctx, palette) => {
+  const countBorder = randomNumber(4, 16)
+  const blockSize = WIDTH / countBorder
+  const width = WIDTH
+  const height = HEIGHT
+  const modes = [semiDual, shark, oneSemi, mess, rotateSemi, pear, chain]
+  const currModeFn = semiDual
+  const colorSchemes = [
+    ['#152A3B', '#158ca7', '#F5C03E', '#D63826', '#F5F5EB'],
+    ['#0F4155', '#288791', '#7ec873', '#F04132', '#fcf068'],
+    ['#E8614F', '#F3F2DB', '#79C3A7', '#668065', '#4B3331'],
+  ]
+  let queueNum = [0, 1, 2, 3, 4]
+  const clrs = colorSchemes[0]
+
+  function paper() {
+    ctx.save()
+    for (let i = 0; i < WIDTH - 1; i += 2) {
+      for (let j = 0; j < HEIGHT - 1; j += 2) {
+        const grey = ~~random(205 - 20, 205 - 30)
+        ctx.fillStyle = 'rgba(' + grey + ',' + grey + ',' + grey + ', .1)'
+        rect(i, j, 2, 2)
+      }
+    }
+
+    for (let i = 0; i < 30; i++) {
+      const grey = ~~random(130, 215)
+      const opacity = (random(100, 170) / 255).toFixed(2)
+      ctx.fillStyle =
+        'rgba(' + grey + ',' + grey + ',' + grey + ', ' + opacity + ')'
+      rect(
+        random(0, WIDTH - 2),
+        random(0, HEIGHT - 2),
+        random(1, 3),
+        random(1, 3),
+      )
+    }
+
+    ctx.restore()
+  }
+
+  function random(min, max) {
+    if (!min && min !== 0) {
+      return Math.random()
+    } else if (!max) {
+      return Math.random() * min
+    }
+
+    return Math.random() * (max - min) + min
+  }
+
+  function background(clr) {
+    ctx.save()
+    ctx.fillStyle = randomItemFromArray(palette)
+    ctx.fillRect(-2, -2, WIDTH, HEIGHT)
+    ctx.restore()
+  }
+
+  function deg2rad(degrees) {
+    return (degrees * Math.PI) / 180
+  }
+
+  function rect(x, y, w, h) {
+    ctx.fillRect(x - w / 2, y - h / 2, w, h)
+  }
+
+  function arc(x, y, w, startAng, endAng) {
+    ctx.beginPath()
+    ctx.arc(x, y, w / 2, startAng, endAng)
+    ctx.fill()
+  }
+  function chain(x, y, clrs) {
+    ctx.rotate(deg2rad(90 * Math.round(random(1, 5))))
+    ctx.fillStyle = clrs[queueNum[1]]
+    arc(x - blockSize / 2, y, blockSize, deg2rad(270), deg2rad(450))
+    ctx.fillStyle = clrs[queueNum[2]]
+    arc(x + blockSize / 2, y, blockSize, deg2rad(90), deg2rad(270))
+
+    ctx.rotate(deg2rad(90 * Math.round(random(1, 5))))
+    ctx.fillStyle = clrs[queueNum[1]]
+    arc(x, y + blockSize / 2, blockSize, deg2rad(180), deg2rad(360))
+    ctx.fillStyle = clrs[queueNum[2]]
+    arc(x, y - blockSize / 2, blockSize, deg2rad(0), deg2rad(180))
+  }
+
+  function pear(x, y, clrs) {
+    ctx.rotate(deg2rad(90 * Math.round(random(1, 5))))
+
+    ctx.fillStyle = clrs[queueNum[1]]
+    arc(x - blockSize / 2, y, blockSize, deg2rad(270), deg2rad(450))
+    ctx.fillStyle = clrs[queueNum[2]]
+    arc(x + blockSize / 2, y, blockSize, deg2rad(90), deg2rad(270))
+
+    ctx.fillStyle = clrs[queueNum[1]]
+    arc(x, y + blockSize / 2, blockSize, deg2rad(180), deg2rad(360))
+    ctx.fillStyle = clrs[queueNum[2]]
+    arc(x, y - blockSize / 2, blockSize, deg2rad(0), deg2rad(180))
+  }
+
+  function rotateSemi(x, y, clrs) {
+    ctx.rotate(deg2rad(90 * Math.round(random(1, 5))))
+    ctx.fillStyle = clrs[queueNum[1]]
+    arc(-blockSize / 2, 0, blockSize, deg2rad(270), deg2rad(450))
+  }
+
+  function mess(x, y, clrs) {
+    ctx.fillStyle = clrs[queueNum[Math.floor(random(queueNum.length))]]
+    arc(-blockSize / 2, 0, blockSize, deg2rad(270), deg2rad(450))
+    for (let i = 0; i < 3; i++) {
+      ctx.fillStyle = clrs[queueNum[Math.floor(random(queueNum.length))]]
+      ctx.rotate(deg2rad(90 * Math.round(random(1, 5))))
+      arc(x, y + blockSize / 2, blockSize, deg2rad(270), deg2rad(450))
+    }
+  }
+
+  function oneSemi(x, y, clrs) {
+    if (random(1) > 0.2) {
+      ctx.fillStyle = clrs[queueNum[Math.floor(random(queueNum.length))]]
+      arc(x - blockSize / 2, y, blockSize, deg2rad(270), deg2rad(450))
+    }
+  }
+
+  function shark(x, y, clrs) {
+    ctx.fillStyle = clrs[queueNum[Math.floor(random(queueNum.length))]]
+    ctx.beginPath()
+    if (random(1) > 0.4) {
+      ctx.lineTo(x, y + blockSize / 2)
+      arc(x, y + blockSize / 2, blockSize, deg2rad(270), deg2rad(360))
+      ctx.lineTo(x, y + blockSize / 2)
+    } else {
+      ctx.lineTo(x, y - blockSize / 2)
+      arc(x, y - blockSize / 2, blockSize, deg2rad(450), deg2rad(540))
+      ctx.lineTo(x, y - blockSize / 2)
+    }
+    ctx.closePath()
+    ctx.fill()
+  }
+
+  function semiDual(x, y, clrs) {
+    ctx.rotate(deg2rad(90 * Math.round(random(1, 5))))
+    if (random() > 0.005) {
+      ctx.fillStyle = clrs[queueNum[1]]
+      arc(x - blockSize / 2, y, blockSize, deg2rad(270), deg2rad(450))
+      ctx.fillStyle = clrs[queueNum[2]]
+      arc(x + blockSize / 2, y, blockSize, deg2rad(90), deg2rad(270))
+    }
+  }
+
+  function shuffleArray(array) {
+    let j, temp
+    for (let i = array.length - 1; i > 0; i--) {
+      j = Math.floor(Math.random() * (i + 1))
+      temp = array[i]
+      array[i] = array[j]
+      array[j] = temp
+    }
+
+    return array
+  }
+
+  function resetPatchwork(modeFn) {
+    const currModeFn = modeFn || currModeFn
+    draw()
+  }
+  function draw() {
+    background(25)
+    for (let y = blockSize / 2; y < height; y += blockSize) {
+      for (let x = blockSize / 2; x < width; x += blockSize) {
+        queueNum = shuffleArray([0, 1, 2, 3, 4])
+        ctx.fillStyle = clrs[queueNum[0]]
+        rect(x, y, blockSize, blockSize)
+
+        ctx.save()
+        ctx.translate(x, y)
+        currModeFn(0, 0, clrs)
+        ctx.restore()
+      }
+    }
+    paper()
+  }
+  resetPatchwork(randomItemFromArray(modes))
 }

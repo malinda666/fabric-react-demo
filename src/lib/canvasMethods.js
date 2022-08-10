@@ -16,6 +16,8 @@ import {
   specks,
   tiledLines,
   circuit,
+  dark,
+  bauhaus2,
 } from './patternMethods'
 
 import { fonts, colorPalettes } from 'data'
@@ -27,11 +29,13 @@ const patternsArray = [
   'line',
   'tri',
   'spiral',
-  'bauhausnoise',
+  // 'bauhausnoise',
   'voronoinoise',
   'specksnoise',
   'linesnoise',
   'circuitnoise',
+  'darknoise',
+  'bauhaus2noise',
 ]
 
 export const clearCanvas = (canvas) => {
@@ -244,6 +248,12 @@ const renderPattern = (p, ctx, palette) => {
       break
     case 'circuitnoise':
       circuit(ctx, palette)
+      break
+    case 'darknoise':
+      dark(ctx, palette)
+      break
+    case 'bauhaus2noise':
+      bauhaus2(ctx, palette)
       break
 
     default:

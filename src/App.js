@@ -78,6 +78,21 @@ export default function App() {
     }
   }
 
+  const regenerate = () => {
+    if (keyword === '') return
+    setLoading(true)
+    let kw = keyword
+    kw = kw[0].toUpperCase() + kw.substring(1)
+    const palette = getRandomColorPalette()
+    setTimeout(() => {
+      createTextLayer(canvas, kw, fabric, palette, getRandomFont().name)
+      // createGradientBackground(canvas, fabric, palette)
+      // createCanvasFilters(canvasRef.current)
+      createBackground(canvasRef.current, canvas, fabric, palette)
+      setLoading(false)
+    }, 100)
+  }
+
   const download = () => {
     downloadCanvas()
   }
@@ -172,13 +187,34 @@ export default function App() {
           />
         </div>
         <div className='relative mt-8 w-full flex items-center justify-center'>
+          <button
+            className='relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800'
+            onClick={regenerate}
+          >
+            <span className='relative px-5 py-2 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0'>
+              Regenerate
+            </span>
+          </button>
           <a ref={downloadRef} href='#' data-tip data-for='download'>
             <button
               type='button'
-              className='text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2'
+              className='text-white  bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2'
               onClick={() => download()}
             >
               Download Artwork
+              <svg
+                aria-hidden='true'
+                className='ml-2 -mr-1 w-5 h-5 inline-block'
+                fill='currentColor'
+                viewBox='0 0 20 20'
+                xmlns='http://www.w3.org/2000/svg'
+              >
+                <path
+                  fillRule='evenodd'
+                  d='M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z'
+                  clipRule='evenodd'
+                ></path>
+              </svg>
             </button>
           </a>
         </div>
