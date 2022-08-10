@@ -133,16 +133,9 @@ export const createTextLayer = (canvas, keyword, fabric, palette, font) => {
   const w = canvas.getWidth() - 2
   text.set('top', h / 2)
   text.set('left', w / 2)
-  limitMovement(text, canvas)
   text.centerH().setCoords()
   canvas.bringToFront(text)
   canvas.renderAll()
-}
-
-export const createCanvasFilters = (canvas) => {
-  const ctx = canvas.getContext('2d')
-
-  ctx.filter = 'blur(4px)'
 }
 
 export const createBackground = (canvas, fabricCanvas, fabric, palette) => {
@@ -258,7 +251,7 @@ const renderPattern = (p, ctx, palette) => {
 export const createBackgroundPatterns = (fabric, canvas, palette) => {
   const p = randomItemFromArray(patternsArray)
 
-  const Cross = fabric.util.createClass(fabric.Object, {
+  const Obj = fabric.util.createClass(fabric.Object, {
     objectCaching: false,
     initialize: function (options) {
       this.callSuper('initialize', options)
@@ -302,19 +295,20 @@ export const createBackgroundPatterns = (fabric, canvas, palette) => {
   })
 
   if (p.includes('noise')) {
-    const c = new Cross({
-      top: 0,
-      left: 0,
-      selectable: false,
-      evented: false,
-      backgroundColor: palette[3],
-    })
-    canvas.add(c)
-    canvas.sendToBack(c)
+    for (let i = 0; i < 2; i++) {
+      const c = new Obj({
+        top: 0,
+        left: 0,
+        selectable: false,
+        evented: false,
+      })
+      canvas.add(c)
+      canvas.sendToBack(c)
+    }
   } else {
     for (let i = 50; i >= 0; i--) {
       for (let j = 0; j < 50; j++) {
-        const c = new Cross({
+        const c = new Obj({
           top: 25 * i,
           left: 25 * j,
           selectable: false,
@@ -325,81 +319,5 @@ export const createBackgroundPatterns = (fabric, canvas, palette) => {
         canvas.sendToBack(c)
       }
     }
-  }
-}
-
-export const limitMovement = (obj, c) => {
-  if (obj && obj.get('type') === 'textbox') {
-    if (obj.height > c.height || obj.width > c.width) {
-      // obj.set({ scaleY: obj.scaleY });
-      // obj.set({ scaleX: obj.scaleX });
-      setTimeout(() => {
-        obj.scaleToHeight(c.height - 10)
-        // console.log("scale ev");
-        scaletextbox()
-      }, 1000)
-    }
-    obj.setCoords()
-    if (
-      obj.getBoundingRect().top - obj.cornerSize / 2 < 0 ||
-      obj.getBoundingRect().left - obj.cornerSize / 2 < 0
-    ) {
-      obj.top = Math.max(
-        obj.top,
-        obj.top - obj.getBoundingRect().top + obj.cornerSize / 2,
-      )
-      obj.left = Math.max(
-        obj.left,
-        obj.left - obj.getBoundingRect().left + obj.cornerSize / 2,
-      )
-      // console.log("first");
-    }
-    if (
-      obj.getBoundingRect().top +
-        obj.getBoundingRect().height +
-        obj.cornerSize >
-        c.height ||
-      obj.getBoundingRect().left +
-        obj.getBoundingRect().width +
-        obj.cornerSize >
-        c.width
-    ) {
-      obj.top = Math.min(
-        obj.top,
-        c.height -
-          obj.getBoundingRect().height +
-          obj.top -
-          obj.getBoundingRect().top -
-          obj.cornerSize / 2,
-      )
-      obj.left = Math.min(
-        obj.left,
-        c.width -
-          obj.getBoundingRect().width +
-          obj.left -
-          obj.getBoundingRect().left -
-          obj.cornerSize / 2,
-      )
-      // console.log("second");
-    }
-  }
-}
-
-const scaletextbox = (c) => {
-  const obj = c.getActiveObject()
-  obj.setCoords()
-  const brNew = obj.getBoundingRect()
-
-  const canw = c.width - 10
-  const canh = c.height - 10
-
-  if (brNew.width + brNew.left >= canw) {
-    const rto = Math.round(brNew.width + brNew.left - canw)
-    obj.set({ left: obj.left + rto })
-    c.renderAll()
-  } else if (brNew.height + brNew.top >= canh) {
-    const rto = Math.round(brNew.height + brNew.top - canh)
-    obj.set({ top: obj.top - rto })
-    c.renderAll()
   }
 }

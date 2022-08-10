@@ -14,6 +14,7 @@ export const randomColor = () => {
   }
   return hexCode
 }
+
 export const randomItemFromArray = (arr) => {
   return arr[Math.floor(Math.random() * arr.length)]
 }
@@ -28,10 +29,8 @@ export const randomNumber = (min, max) => {
 export {
   createGradientBackground,
   createTextLayer,
-  createCanvasFilters,
   createBackground,
   clearCanvas,
-  limitMovement,
   getRandomColorPalette,
   getRandomFont,
 } from './canvasMethods'

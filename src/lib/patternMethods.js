@@ -365,6 +365,7 @@ export const specks = (ctx, palette) => {
 
     ctx.beginPath()
     ctx.ellipse(x, y, radius, radius / 2, 0, Math.PI * 2, 0)
+    triangle(ctx, x, y, radius)
     ctx.fill()
 
     ctx.restore()

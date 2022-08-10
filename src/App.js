@@ -1,6 +1,8 @@
+/* eslint-disable react/no-unknown-property */
 import { useLayoutEffect, useState, useRef } from 'react'
 import { fabric } from 'fabric'
 import * as WF from 'webfontloader'
+import 'canvas-toBlob/canvas-toBlob'
 
 import { useCanvas } from 'context/CanvasContext'
 import { Spinner } from 'components'
@@ -9,10 +11,7 @@ import {
   HEIGHT,
   WIDTH,
   createTextLayer,
-  createGradientBackground,
-  createCanvasFilters,
   createBackground,
-  limitMovement,
   getRandomColorPalette,
   getRandomFont,
 } from 'lib'
@@ -20,6 +19,8 @@ import { fonts } from 'data'
 
 export default function App() {
   const canvasRef = useRef()
+  const finalCanvas = useRef()
+  const downloadRef = useRef()
   const { canvas, setCanvas, setLoading, isLoading } = useCanvas()
   const [keyword, setKeyword] = useState('')
 
@@ -38,13 +39,6 @@ export default function App() {
     })
     _canvas.requestRenderAll()
     setCanvas(_canvas)
-
-    /** limit movements on edges */
-    if (!canvas) return
-    canvas.on('object:moving', function (e) {
-      const obj = e.target
-      limitMovement(obj)
-    })
   }, [])
   useLayoutEffect(() => {
     setLoading(true)
@@ -84,6 +78,71 @@ export default function App() {
     }
   }
 
+  const download = () => {
+    downloadCanvas()
+  }
+
+  function zoom(width) {
+    const scale = width / canvas.getWidth()
+    const height = scale * canvas.getHeight()
+
+    canvas.setDimensions({
+      width: width,
+      height: height,
+    })
+
+    canvas.calcOffset()
+    const objects = canvas.getObjects()
+    for (const i in objects) {
+      const scaleX = objects[i].scaleX
+      const scaleY = objects[i].scaleY
+      const left = objects[i].left
+      const top = objects[i].top
+
+      objects[i].scaleX = scaleX * scale
+      objects[i].scaleY = scaleY * scale
+      objects[i].left = left * scale
+      objects[i].top = top * scale
+
+      objects[i].setCoords()
+    }
+    canvas.renderAll()
+  }
+  const downloadCanvas = () => {
+    const image = new Image()
+    image.crossOrigin = 'anonymous'
+    image.onload = function (event) {
+      canvas.discardActiveObject().renderAll()
+      // console.log("loadin");
+      try {
+        setLoading(true)
+
+        zoom(3000)
+        setTimeout(() => {
+          const canvasEl = canvas.wrapperEl.childNodes[0]
+          const big = finalCanvas.current
+          const ctx = big.getContext('2d')
+          ctx.drawImage(canvasEl, 0, 0, 3000, 3000)
+          big.toBlobHD((blob) => {
+            const objurl = URL.createObjectURL(blob)
+            downloadRef.current.href = objurl
+            downloadRef.current.download = 'artwork.png'
+            downloadRef.current.setAttribute('download', 'final_artwork.png')
+            downloadRef.current.click()
+            downloadRef.current.href = '#'
+            // console.log(downloadRef.current);
+            setLoading(false)
+            zoom(600)
+          })
+        }, 1000)
+      } catch (e) {
+        console.log(e)
+        setLoading(false)
+      }
+    }
+    image.src = 'https://i.chzbgr.com/maxW500/1691290368/h07F7F378/'
+  }
+
   return (
     <>
       <div className='max-w-[600px] mx-auto flex flex-col m-4 overflow-x-hidden'>
@@ -112,6 +171,26 @@ export default function App() {
             ref={canvasRef}
           />
         </div>
+        <div className='relative mt-8 w-full flex items-center justify-center'>
+          <a ref={downloadRef} href='#' data-tip data-for='download'>
+            <button
+              type='button'
+              className='text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2'
+              onClick={() => download()}
+            >
+              Download Artwork
+            </button>
+          </a>
+        </div>
+      </div>
+      <div className='hidden'>
+        <canvas
+          id='final'
+          height='3000px'
+          width='3000px'
+          crossOrigin='anonymous'
+          ref={finalCanvas}
+        ></canvas>
       </div>
     </>
   )
