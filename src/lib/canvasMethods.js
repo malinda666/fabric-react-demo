@@ -23,15 +23,15 @@ import { fonts, colorPalettes } from 'data'
 const trueFalse = ['true', '']
 const fontStyles = ['italic', 'bold', 'normal']
 const patternsArray = [
-  'arc',
-  'line',
-  'tri',
-  'spiral',
+  // 'arc',
+  // 'line',
+  // 'tri',
+  // 'spiral',
   // 'noise',
   // 'noisewaves',
   'bauhausnoise',
-  'voronoinoise',
-  'specksnoise',
+  // 'voronoinoise',
+  // 'specksnoise',
 ]
 
 export const clearCanvas = (canvas) => {
@@ -139,8 +139,8 @@ export const createTextLayer = (canvas, keyword, fabric, palette, font) => {
 }
 
 export const createBackground = (canvas, fabricCanvas, fabric, palette) => {
-  // const isPattern = ''
-  const isPattern = randomItemFromArray(trueFalse)
+  const isPattern = ''
+  // const isPattern = randomItemFromArray(trueFalse)
 
   const shape = new fabric.Rect({
     width: WIDTH,
@@ -238,6 +238,7 @@ const renderPattern = (p, ctx, palette) => {
       bauhaus(ctx, palette)
       break
     case 'voronoinoise':
+      console.log('voronoi')
       voronoi(ctx, palette)
       break
     case 'specksnoise':
@@ -295,16 +296,16 @@ export const createBackgroundPatterns = (fabric, canvas, palette) => {
   })
 
   if (p.includes('noise')) {
-    for (let i = 0; i < 2; i++) {
-      const c = new Obj({
-        top: 0,
-        left: 0,
-        selectable: false,
-        evented: false,
-      })
-      canvas.add(c)
-      canvas.sendToBack(c)
-    }
+    // for (let i = 0; i < 2; i++) {
+    // }
+    const c = new Obj({
+      top: 0,
+      left: 0,
+      selectable: false,
+      evented: false,
+    })
+    canvas.add(c)
+    canvas.sendToBack(c)
   } else {
     for (let i = 50; i >= 0; i--) {
       for (let j = 0; j < 50; j++) {

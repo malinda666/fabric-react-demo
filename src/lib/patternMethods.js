@@ -233,7 +233,7 @@ export const bauhaus = (ctx, palette) => {
     ctx.setTransform(ratio, 0, 0, ratio, centerShiftX, centerShiftY)
   }
 
-  const patternSize = 1024
+  const patternSize = WIDTH
   const patternDetail = randomNumber(2, 64)
   const colors = palette
 
@@ -282,7 +282,7 @@ export const bauhaus = (ctx, palette) => {
       }
 
       ctx.fill()
-      ctx.stroke()
+      // ctx.stroke()
       ctx.restore()
     }
   }
@@ -294,7 +294,7 @@ export const voronoi = (ctx, palette) => {
   const colors = palette
 
   ctx.fillStyle = background
-  ctx.fillRect(0, 0, WIDTH, HEIGHT)
+  ctx.fillRect(-3, -3, WIDTH, HEIGHT)
 
   const { cells } = createVoronoiTessellation({
     WIDTH,
@@ -344,6 +344,7 @@ export const voronoi = (ctx, palette) => {
   })
 }
 
+// confetti
 export const specks = (ctx, palette) => {
   const colors = palette
   const count = 3000

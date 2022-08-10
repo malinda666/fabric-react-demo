@@ -164,10 +164,10 @@ export default function App() {
           />
           <div className='ml-4'>{isLoading && <Spinner type='dark' />}</div>
         </div>
-        <div className='bg-gray-200' style={{ width: WIDTH, height: HEIGHT }}>
+        <div className='bg-black' style={{ width: WIDTH, height: HEIGHT }}>
           <canvas
             id='canvas'
-            className='w-full h-full relative'
+            className='w-full h-full relative '
             ref={canvasRef}
           />
         </div>
