@@ -11,8 +11,6 @@ import {
   createLine,
   createTriangle,
   createSpiral,
-  // createNoise,
-  createNoiseWaves,
   bauhaus,
   voronoi,
   specks,
@@ -23,15 +21,13 @@ import { fonts, colorPalettes } from 'data'
 const trueFalse = ['true', '']
 const fontStyles = ['italic', 'bold', 'normal']
 const patternsArray = [
-  // 'arc',
-  // 'line',
-  // 'tri',
-  // 'spiral',
-  // 'noise',
-  // 'noisewaves',
+  'arc',
+  'line',
+  'tri',
+  'spiral',
   'bauhausnoise',
-  // 'voronoinoise',
-  // 'specksnoise',
+  'voronoinoise',
+  'specksnoise',
 ]
 
 export const clearCanvas = (canvas) => {
@@ -228,12 +224,7 @@ const renderPattern = (p, ctx, palette) => {
     case 'spiral':
       createSpiral(ctx)
       break
-    // case 'noise':
-    //   createNoise(ctx)
-    //   break
-    case 'noisewaves':
-      createNoiseWaves(ctx)
-      break
+
     case 'bauhausnoise':
       bauhaus(ctx, palette)
       break
