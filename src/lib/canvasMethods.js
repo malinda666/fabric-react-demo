@@ -11,11 +11,14 @@ import {
   createLine,
   createTriangle,
   createSpiral,
-  createNoise,
+  // createNoise,
   createNoiseWaves,
+  bauhaus,
+  voronoi,
+  specks,
 } from './patternMethods'
 
-import { fonts, colorPalettes, patterns } from 'data'
+import { fonts, colorPalettes } from 'data'
 
 const trueFalse = ['true', '']
 const fontStyles = ['italic', 'bold', 'normal']
@@ -23,9 +26,12 @@ const patternsArray = [
   'arc',
   'line',
   'tri',
-  // 'spiral',
+  'spiral',
   // 'noise',
-  'noisewaves',
+  // 'noisewaves',
+  'bauhausnoise',
+  'voronoinoise',
+  'specksnoise',
 ]
 
 export const clearCanvas = (canvas) => {
@@ -214,7 +220,7 @@ export const createBackgroundGradient = (fabric, palette) => {
   })
 }
 
-const renderPattern = (p, ctx) => {
+const renderPattern = (p, ctx, palette) => {
   switch (p) {
     case 'arc':
       createArc(ctx)
@@ -234,6 +240,15 @@ const renderPattern = (p, ctx) => {
     //   break
     case 'noisewaves':
       createNoiseWaves(ctx)
+      break
+    case 'bauhausnoise':
+      bauhaus(ctx, palette)
+      break
+    case 'voronoinoise':
+      voronoi(ctx, palette)
+      break
+    case 'specksnoise':
+      specks(ctx, palette)
       break
 
     default:
@@ -257,7 +272,7 @@ export const createBackgroundPatterns = (fabric, canvas, palette) => {
     },
 
     _render: function (ctx) {
-      ctx.globalAlpha = 0.5
+      ctx.globalAlpha = randomNumber(0.3, 0.7)
       // ctx.fillRect(-this.w1 / 2, -this.h1 / 2, this.w1, this.h1)
       // ctx.fillRect(-this.w2 / 2, -this.h2 / 2, this.w2, this.h2)
       const gradient = ctx.createLinearGradient(0, 0, 200, 0)
@@ -282,7 +297,7 @@ export const createBackgroundPatterns = (fabric, canvas, palette) => {
         palette[1],
       ])
 
-      renderPattern(p, ctx)
+      renderPattern(p, ctx, palette)
     },
   })
 
@@ -388,30 +403,3 @@ const scaletextbox = (c) => {
     c.renderAll()
   }
 }
-
-// function resetParticle(p) {
-//   p = p || {}
-//   const scale = Math.min(WIDTH, HEIGHT) / 2
-//   p.position = randomSphere([], random(0, scale * startArea))
-//   p.position[0] += WIDTH / 2
-//   p.position[1] += HEIGHT / 2
-//   p.radius = random(0.01, maxRadius)
-//   p.duration = random(1, 500)
-//   p.time = random(0, p.duration)
-//   p.velocity = [random(-1, 1), random(-1, 1)]
-//   p.speed = random(0.5, 2) * dpr
-
-//   // Note: We actually include the background color here.
-//   // This means some strokes may seem to "erase" the other
-//   // colours, which can add a nice effect.
-//   p.color = palette[Math.floor(random(palette.length))]
-//   return p
-// }
-
-// function randomSphere(out, scale) {
-//   scale = scale || 1.0
-//   const r = randFunc() * 2.0 * Math.PI
-//   out[0] = Math.cos(r) * scale
-//   out[1] = Math.sin(r) * scale
-//   return out
-// }
