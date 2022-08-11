@@ -112,8 +112,7 @@ export const createTextLayer = (
 
   const text = new fabric.Textbox(keyword, {
     id: 'text_box',
-    left: canvas.width / 2,
-    top: canvas.height / 2,
+    angle: 0,
     fontFamily: font || 'Inter',
     fontSize: canvas.width / 8,
     fill: palette[3],
@@ -125,7 +124,6 @@ export const createTextLayer = (
         : '',
     // stroke: strokeType === '' ? '' : randomColor(),
     strokeWidth: 2,
-    lineHeight: 0.85,
     originX: 'center',
     originY: 'center',
     textAlign: 'center',
@@ -154,19 +152,15 @@ export const createTextLayer = (
         }),
       )
     : text.set({ fill: palette[3] })
-  // c.renderAll()
 
-  const h = canvas.getHeight() - text.get('height')
-  const w = canvas.getWidth() - 2
-  text.set('top', h / 2)
-  text.set('left', w / 2)
   text.centerH().setCoords()
+  text.centerV().setCoords()
   canvas.bringToFront(text)
-  setTimeout(() => {
-    fitText(false, altCanvas, canvas)
-    canvas.renderAll()
-    canvas.discardActiveObject().renderAll()
-  }, 300)
+  // setTimeout(() => {
+  fitText(false, altCanvas, canvas)
+  canvas.renderAll()
+  canvas.discardActiveObject().renderAll()
+  // }, 300)
   canvas.renderAll()
 }
 

@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unknown-property */
 import { useLayoutEffect, useState, useRef } from 'react'
 import { fabric } from 'fabric'
 import * as WF from 'webfontloader'
@@ -21,8 +20,16 @@ export default function App() {
   const canvasRef = useRef()
   const finalCanvas = useRef()
   const downloadRef = useRef()
-  const { canvas, setCanvas, canvas2, setCanvas2, setLoading, isLoading } =
-    useCanvas()
+  const {
+    canvas,
+    setCanvas,
+    canvas2,
+    setCanvas2,
+    setLoading,
+    isLoading,
+    fontFamily,
+    setFontFamily,
+  } = useCanvas()
   const [keyword, setKeyword] = useState('')
 
   useLayoutEffect(() => {
@@ -70,15 +77,10 @@ export default function App() {
     let kw = keyword
     kw = kw[0].toUpperCase() + kw.substring(1)
     const palette = getRandomColorPalette()
+    const font = getRandomFont().name
+    setFontFamily(font)
     setTimeout(() => {
-      createTextLayer(
-        canvas,
-        canvas2,
-        kw,
-        fabric,
-        palette,
-        getRandomFont().name,
-      )
+      createTextLayer(canvas, canvas2, kw, fabric, palette, font)
       // createGradientBackground(canvas, fabric, palette)
       // createCanvasFilters(canvasRef.current)
       createBackground(canvasRef.current, canvas, fabric, palette)
@@ -186,8 +188,11 @@ export default function App() {
           />
         </div>
         <div className='relative mt-8 w-full flex items-center justify-center'>
+          <p className='font-normal text-gray-700 dark:text-gray-400 mr-4'>
+            Font Family: {fontFamily}
+          </p>
           <button
-            className='relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800'
+            className='relative inline-flex items-center justify-center p-0.5 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500 group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800'
             onClick={regenerate}
           >
             <span className='relative px-5 py-2 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0'>
@@ -197,7 +202,7 @@ export default function App() {
           <a ref={downloadRef} href='#' data-tip data-for='download'>
             <button
               type='button'
-              className='text-white  bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2'
+              className='text-white  bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2'
               onClick={() => download()}
             >
               Download Artwork
@@ -219,13 +224,18 @@ export default function App() {
         </div>
       </div>
       <div className='hidden'>
-        <canvas id='c' crossOrigin='anonymous'></canvas>
+        <canvas
+          id='c'
+          // eslint-disable-next-line react/no-unknown-property
+          crossOrigin='anonymous'
+        ></canvas>
       </div>
       <div className='hidden'>
         <canvas
           id='final'
           height='3000px'
           width='3000px'
+          // eslint-disable-next-line react/no-unknown-property
           crossOrigin='anonymous'
           ref={finalCanvas}
         ></canvas>
