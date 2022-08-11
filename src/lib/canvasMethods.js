@@ -38,6 +38,17 @@ const patternsArray = [
   'bauhaus2noise',
 ]
 
+const selectObject = (canvas, id) => {
+  let obj
+  canvas.getObjects().forEach(function (o) {
+    if (o.id === id) {
+      canvas.setActiveObject(o)
+      obj = o
+    }
+  })
+
+  return obj
+}
 export const clearCanvas = (canvas) => {
   canvas.setBackgroundColor(BACKGROUND_COLOR)
   canvas.remove(...canvas.getObjects())
@@ -85,7 +96,14 @@ export const createGradientBackground = (canvas, fabric, palette) => {
   canvas.renderAll()
 }
 
-export const createTextLayer = (canvas, keyword, fabric, palette, font) => {
+export const createTextLayer = (
+  canvas,
+  altCanvas,
+  keyword,
+  fabric,
+  palette,
+  font,
+) => {
   clearCanvas(canvas)
 
   const shadowType = randomItemFromArray(trueFalse)
@@ -93,6 +111,7 @@ export const createTextLayer = (canvas, keyword, fabric, palette, font) => {
   const fontStyle = randomItemFromArray(fontStyles)
 
   const text = new fabric.Textbox(keyword, {
+    id: 'text_box',
     left: canvas.width / 2,
     top: canvas.height / 2,
     fontFamily: font || 'Inter',
@@ -107,11 +126,15 @@ export const createTextLayer = (canvas, keyword, fabric, palette, font) => {
     // stroke: strokeType === '' ? '' : randomColor(),
     strokeWidth: 2,
     lineHeight: 0.85,
+    originX: 'center',
+    originY: 'center',
     textAlign: 'center',
     fontStyle: fontStyle,
     // underline: isUnderlined === '' ? false : true,
-    width: canvas.getWidth() - 10,
+    // width: canvas.getWidth() - 10,
     fontCharacterStyle: 'Caps',
+    editable: false,
+    perPixelTargetFind: false,
   })
   canvas.add(text)
   isFontGrad === ''
@@ -139,6 +162,11 @@ export const createTextLayer = (canvas, keyword, fabric, palette, font) => {
   text.set('left', w / 2)
   text.centerH().setCoords()
   canvas.bringToFront(text)
+  setTimeout(() => {
+    fitText(false, altCanvas, canvas)
+    canvas.renderAll()
+    canvas.discardActiveObject().renderAll()
+  }, 300)
   canvas.renderAll()
 }
 
@@ -332,4 +360,85 @@ export const createBackgroundPatterns = (fabric, canvas, palette) => {
       }
     }
   }
+}
+
+const fitText = (cycling, canvas, mainCanvas) => {
+  const ctx = canvas.getContext('2d')
+  const txtBox = selectObject(mainCanvas, 'text_box')
+
+  if (!canvas) return
+  mainCanvas.setActiveObject(txtBox)
+
+  canvas.clear()
+  canvas.width = cycling ? txtBox.width : 200
+  canvas.renderAll()
+
+  txtBox.removeStyle('fontSize')
+  txtBox.cleanStyle('fontSize')
+  txtBox.set({ textAlign: 'center' })
+  canvas.renderAll()
+
+  const fitFont = txtBox.fontFamily
+  const weight = txtBox.fontWeight
+  const texts = []
+  const stline = []
+  const cntLines = txtBox.textLines?.length
+  for (let j = 0; j < cntLines; j++) {
+    texts.push(txtBox.textLines[j])
+  }
+  let yPos = 0,
+    fontsize
+  texts.forEach(function (txt) {
+    fontsize = fitTextOnCanvas(canvas, txt, fitFont, weight)
+    yPos += fontsize
+    // draw the text
+    ctx.fillStyle = 'white'
+    ctx.fillText(txt, 0, yPos)
+    stline.push(fontsize)
+  })
+  // console.log(stline);
+  txtBox.removeStyle('fontSize')
+  txtBox.cleanStyle('fontSize')
+  txtBox.removeStyle('fontWeight')
+  txtBox.cleanStyle('fontWeight')
+  canvas.renderAll()
+  let b = 0
+  const cnttextline = txtBox._textLines.length
+  for (let a = 0; a < cnttextline; a++) {
+    if (!txtBox._textLines[a]) return
+    const totaltextperline = txtBox._textLines[a].length
+    // console.log("start:"+b);
+    txtBox.setSelectionStart(b)
+    b = b + totaltextperline
+    // console.log("end:"+b);
+    txtBox.setSelectionEnd(b)
+    txtBox.setSelectionStyles({
+      fontSize: stline[a],
+      fontWeight: weight,
+    })
+    canvas.renderAll()
+    // console.log(stline[a]);
+    b++
+  }
+  txtBox.set({
+    lineHeight: 1,
+  })
+  canvas.discardActiveObject().renderAll()
+}
+
+function fitTextOnCanvas(canvas, text, fontface, fontweight) {
+  const ctx = canvas.getContext('2d')
+  // start with a large font size
+  let fontsize = 1024
+
+  // lower the font size until the text fits the canvas
+  do {
+    fontsize--
+
+    ctx.font = fontweight
+      ? fontweight + ' ' + fontsize + 'px ' + fontface
+      : fontsize + 'px ' + fontface
+  } while (ctx.measureText(text).width > canvas.width)
+  // console.log("00000");
+  return fontsize
 }

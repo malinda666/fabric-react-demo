@@ -21,7 +21,8 @@ export default function App() {
   const canvasRef = useRef()
   const finalCanvas = useRef()
   const downloadRef = useRef()
-  const { canvas, setCanvas, setLoading, isLoading } = useCanvas()
+  const { canvas, setCanvas, canvas2, setCanvas2, setLoading, isLoading } =
+    useCanvas()
   const [keyword, setKeyword] = useState('')
 
   useLayoutEffect(() => {
@@ -39,6 +40,9 @@ export default function App() {
     })
     _canvas.requestRenderAll()
     setCanvas(_canvas)
+
+    const canvas2 = new fabric.Canvas('can')
+    setCanvas2(canvas2)
   }, [])
   useLayoutEffect(() => {
     setLoading(true)
@@ -60,24 +64,6 @@ export default function App() {
   const onChangeKeyword = (e) => {
     setKeyword(e.target.value)
   }
-
-  const handleEnter = (e) => {
-    if (e.key === 'Enter') {
-      if (keyword === '') return
-      setLoading(true)
-      let kw = keyword
-      kw = kw[0].toUpperCase() + kw.substring(1)
-      const palette = getRandomColorPalette()
-      setTimeout(() => {
-        createTextLayer(canvas, kw, fabric, palette, getRandomFont().name)
-        // createGradientBackground(canvas, fabric, palette)
-        // createCanvasFilters(canvasRef.current)
-        createBackground(canvasRef.current, canvas, fabric, palette)
-        setLoading(false)
-      }, 100)
-    }
-  }
-
   const regenerate = () => {
     if (keyword === '') return
     setLoading(true)
@@ -85,12 +71,25 @@ export default function App() {
     kw = kw[0].toUpperCase() + kw.substring(1)
     const palette = getRandomColorPalette()
     setTimeout(() => {
-      createTextLayer(canvas, kw, fabric, palette, getRandomFont().name)
+      createTextLayer(
+        canvas,
+        canvas2,
+        kw,
+        fabric,
+        palette,
+        getRandomFont().name,
+      )
       // createGradientBackground(canvas, fabric, palette)
       // createCanvasFilters(canvasRef.current)
       createBackground(canvasRef.current, canvas, fabric, palette)
       setLoading(false)
     }, 100)
+  }
+
+  const handleEnter = (e) => {
+    if (e.key === 'Enter') {
+      regenerate()
+    }
   }
 
   const download = () => {
@@ -218,6 +217,9 @@ export default function App() {
             </button>
           </a>
         </div>
+      </div>
+      <div className='hidden'>
+        <canvas id='c' crossOrigin='anonymous'></canvas>
       </div>
       <div className='hidden'>
         <canvas
