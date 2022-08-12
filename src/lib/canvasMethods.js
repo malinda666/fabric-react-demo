@@ -1,9 +1,7 @@
 import {
   randomItemFromArray,
-  WIDTH,
-  HEIGHT,
-  BACKGROUND_COLOR,
   randomNumber,
+  getBiggestItemIndexInArray,
 } from './index'
 
 import {
@@ -22,25 +20,17 @@ import {
 
 import { capitalize, uppercase, randomUppercase } from './textMethods'
 
-import { fonts, colorPalettes } from 'data'
-
-const trueFalse = ['true', '']
-const fontStyles = ['italic', 'bold', 'normal']
-const patternsArray = [
-  'arc',
-  'line',
-  'tri',
-  'spiral',
-  // 'bauhausnoise',
-  'voronoinoise',
-  'specksnoise',
-  'linesnoise',
-  'circuitnoise',
-  'darknoise',
-  'bauhaus2noise',
-]
-
-const textStyles = ['capitalize', 'uppercase', 'randomUppercase']
+import {
+  fonts,
+  colorPalettes,
+  WIDTH,
+  HEIGHT,
+  BACKGROUND_COLOR,
+  patternsArray,
+  fontStyles,
+  trueFalse,
+  textStyles,
+} from 'data'
 
 const selectObject = (canvas, id) => {
   let obj
@@ -405,6 +395,8 @@ const fitText = (cycling, canvas, mainCanvas) => {
   canvas.renderAll()
   let b = 0
   const cnttextline = txtBox._textLines.length
+  const biggestWordIdx = getBiggestItemIndexInArray(stline)
+
   for (let a = 0; a < cnttextline; a++) {
     if (!txtBox._textLines[a]) return
     const totaltextperline = txtBox._textLines[a].length
@@ -417,9 +409,10 @@ const fitText = (cycling, canvas, mainCanvas) => {
       fontSize: stline[a],
       fontWeight: weight,
     })
-    if (a === 1) {
+    if (a === biggestWordIdx) {
       txtBox.setSelectionStyles({
-        fontStyle: 'italic',
+        fontStyle: randomItemFromArray(fontStyles),
+        fontFamily: randomItemFromArray(fonts).value,
       })
     }
     canvas.renderAll()

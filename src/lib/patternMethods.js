@@ -1,13 +1,9 @@
-import { createNoise3D } from 'simplex-noise'
+// import { createNoise3D } from 'simplex-noise'
 import { createVoronoiTessellation } from '@georgedoescode/generative-utils'
 
-import {
-  randomItemFromArray,
-  WIDTH,
-  HEIGHT,
-  randomNumber,
-  randomColor,
-} from './index'
+import { randomItemFromArray, randomNumber } from './index'
+
+import { WIDTH, HEIGHT } from 'data'
 
 import { circle, arc, triangle, rectangle } from './shapeBuilders'
 
@@ -146,7 +142,6 @@ export const bauhaus = (ctx, palette) => {
 
 export const voronoi = (ctx, palette) => {
   const background = randomItemFromArray(palette)
-  const seed = 123456
   const colors = palette
 
   ctx.fillStyle = background
@@ -259,8 +254,6 @@ export const circuit = (ctx, palette) => {
   const step = 20
   const iterations = size
 
-  const lines = []
-
   function addCircle(x, y, color) {
     ctx.beginPath()
     // arc(x, y, radius, startAngle, endAngle, anticlockwise)
@@ -306,7 +299,7 @@ export const circuit = (ctx, palette) => {
   }
 }
 
-export const dark = (ctx, palette) => {
+export const dark = (ctx) => {
   const size = WIDTH
   const dpr = window.devicePixelRatio
   // ctx.width = size * dpr
@@ -399,7 +392,7 @@ export const bauhaus2 = (ctx, palette) => {
     return Math.random() * (max - min) + min
   }
 
-  function background(clr) {
+  function background() {
     ctx.save()
     ctx.fillStyle = randomItemFromArray(palette)
     ctx.fillRect(-2, -2, WIDTH, HEIGHT)

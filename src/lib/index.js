@@ -1,10 +1,4 @@
-// contants
-export const BACKGROUND_COLOR = 'rgb(229 ,231, 235 ,1)'
-export const WIDTH = 600
-export const HEIGHT = 600
-
-// function vars
-export const hexString = '0123456789abcdef'
+import { hexString } from 'data'
 
 // function utils
 export const randomColor = () => {
@@ -17,6 +11,13 @@ export const randomColor = () => {
 
 export const randomItemFromArray = (arr) => {
   return arr[Math.floor(Math.random() * arr.length)]
+}
+
+export const getBiggestItemIndexInArray = (arr) => {
+  const max = Math.max(...arr)
+  const index = arr.indexOf(max)
+
+  return index
 }
 
 export const randomNumber = (min, max) => {

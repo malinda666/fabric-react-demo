@@ -1,20 +1,17 @@
 import { useLayoutEffect, useState, useRef } from 'react'
 import { fabric } from 'fabric'
-import * as WF from 'webfontloader'
+import WF from 'webfontloader'
 import 'canvas-toBlob/canvas-toBlob'
 
 import { useCanvas } from 'context/CanvasContext'
-import { Spinner, Loader } from 'components'
+import { Spinner } from 'components'
 import {
-  BACKGROUND_COLOR,
-  HEIGHT,
-  WIDTH,
   createTextLayer,
   createBackground,
   getRandomColorPalette,
   getRandomFont,
 } from 'lib'
-import { fonts } from 'data'
+import { fonts, BACKGROUND_COLOR, HEIGHT, WIDTH } from 'data'
 
 export default function App() {
   const canvasRef = useRef()
@@ -125,6 +122,7 @@ export default function App() {
   const downloadCanvas = () => {
     const image = new Image()
     image.crossOrigin = 'anonymous'
+    // eslint-disable-next-line no-unused-vars
     image.onload = function (event) {
       canvas.discardActiveObject().renderAll()
       // console.log("loadin");
@@ -159,7 +157,6 @@ export default function App() {
 
   return (
     <>
-      {/* <Loader isLoading={isLoading} /> */}
       <div className='max-w-[600px] mx-auto flex flex-col m-4 overflow-x-hidden'>
         <div className='flex items-center justify-center my-4 w-full'>
           <label
@@ -187,8 +184,8 @@ export default function App() {
           />
         </div>
         <div className='relative mt-8 w-full flex items-center justify-between'>
-          <p className='text-xs text-gray-700 dark:text-gray-400 mr-4'>
-            Font Family: {fontFamily}
+          <p className='text-xs text-gray-700 dark:text-gray-400 mr-4 capitalize'>
+            main font: {fontFamily}
           </p>
           <div>
             <button
