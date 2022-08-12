@@ -414,6 +414,7 @@ const fitText = (cycling, canvas, mainCanvas) => {
         fontStyle: randomItemFromArray(fontStyles),
         fontFamily: randomItemFromArray(fonts).value,
       })
+      canvas.renderAll()
     }
     canvas.renderAll()
     b++
