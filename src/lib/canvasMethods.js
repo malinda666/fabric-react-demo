@@ -20,6 +20,8 @@ import {
   bauhaus2,
 } from './patternMethods'
 
+import { capitalize, uppercase, randomUppercase } from './textMethods'
+
 import { fonts, colorPalettes } from 'data'
 
 const trueFalse = ['true', '']
@@ -37,6 +39,8 @@ const patternsArray = [
   'darknoise',
   'bauhaus2noise',
 ]
+
+const textStyles = ['capitalize', 'uppercase', 'randomUppercase']
 
 const selectObject = (canvas, id) => {
   let obj
@@ -129,9 +133,10 @@ export const createTextLayer = (
     textAlign: 'center',
     fontStyle: fontStyle,
     // underline: isUnderlined === '' ? false : true,
-    // width: canvas.getWidth() - 10,
+    // width: canvas.getWidth() - 30,
     fontCharacterStyle: 'Caps',
     editable: false,
+    evented: false,
     perPixelTargetFind: false,
   })
   canvas.add(text)
@@ -378,7 +383,9 @@ const fitText = (cycling, canvas, mainCanvas) => {
   const stline = []
   const cntLines = txtBox.textLines?.length
   for (let j = 0; j < cntLines; j++) {
-    texts.push(txtBox.textLines[j])
+    const t = txtBox.textLines[j]
+    const _t = t[0].toUpperCase() + t.substring(1)
+    texts.push(_t)
   }
   let yPos = 0,
     fontsize
@@ -390,7 +397,7 @@ const fitText = (cycling, canvas, mainCanvas) => {
     ctx.fillText(txt, 0, yPos)
     stline.push(fontsize)
   })
-  // console.log(stline);
+  // texts[1]
   txtBox.removeStyle('fontSize')
   txtBox.cleanStyle('fontSize')
   txtBox.removeStyle('fontWeight')
@@ -410,14 +417,40 @@ const fitText = (cycling, canvas, mainCanvas) => {
       fontSize: stline[a],
       fontWeight: weight,
     })
+    if (a === 1) {
+      txtBox.setSelectionStyles({
+        fontStyle: 'italic',
+      })
+    }
     canvas.renderAll()
-    // console.log(stline[a]);
     b++
   }
   txtBox.set({
-    lineHeight: 1,
+    lineHeight: 0.9,
   })
+
+  const randomType = randomItemFromArray(textStyles)
+
+  changeTextStyles(txtBox, randomType)
+
   canvas.discardActiveObject().renderAll()
+}
+const changeTextStyles = (obj, type) => {
+  switch (type) {
+    case 'capitalize':
+      capitalize(obj)
+      break
+    case 'uppercase':
+      uppercase(obj)
+      break
+    case 'randomUppercase':
+      randomUppercase(obj)
+      break
+
+    default:
+      capitalize(obj)
+      break
+  }
 }
 
 function fitTextOnCanvas(canvas, text, fontface, fontweight) {
