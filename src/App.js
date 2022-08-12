@@ -146,7 +146,7 @@ export default function App() {
             setLoading(false)
             zoom(600)
           })
-        }, 1000)
+        }, 1200)
       } catch (e) {
         console.log(e)
         setLoading(false)
