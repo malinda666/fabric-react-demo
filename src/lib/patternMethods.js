@@ -564,9 +564,9 @@ export const stripes = (ctx, palette) => {
   }
 }
 export const checkers = (ctx, palette) => {
-  const orientations = ['vertical', 'horizontal', 'angled']
+  // const orientations = ['vertical', 'horizontal', 'angled']
   const color1 = randomItemFromArray(palette)
-  const color2 = randomItemFromArray(palette)
+  // const color2 = randomItemFromArray(palette)
   const dimension = randomNumber(3, 40)
   const step = dimension * 2
   const limit = WIDTH + 50
