@@ -7,6 +7,7 @@ import { WIDTH, HEIGHT } from 'data'
 
 import { circle, arc, triangle, rectangle } from './shapeBuilders'
 
+// recursive patterns
 export const createArc = (ctx) => {
   const angle = Math.random() * 6.2
   const x1 = randomNumber(WIDTH / -2, HEIGHT / 2) + Math.sin(angle)
@@ -76,6 +77,7 @@ export const createSpiral = (ctx) => {
   ctx.fill()
 }
 
+// algorithmic patterns
 export const bauhaus = (ctx, palette) => {
   function scaleCtx(ctx, width, height, elementWidth, elementHeight) {
     const ratio = Math.max(elementWidth / width, elementHeight / height)
@@ -223,6 +225,7 @@ export const specks = (ctx, palette) => {
   }
 }
 
+// normal patterns
 export const tiledLines = (ctx, palette) => {
   const step = randomNumber(5, 25)
   ctx.strokeStyle = randomItemFromArray(palette)
@@ -522,4 +525,68 @@ export const bauhaus2 = (ctx, palette) => {
     paper()
   }
   resetPatchwork(randomItemFromArray(modes))
+}
+export const stripes = (ctx, palette) => {
+  const orientations = ['vertical', 'horizontal', 'angled']
+  const color1 = randomItemFromArray(palette)
+  const color2 = randomItemFromArray(palette)
+  const numberOfStripes = randomNumber(10, 40)
+  const thickness = WIDTH / numberOfStripes
+  const orientation = randomItemFromArray(orientations)
+
+  if (orientation === 'angled') {
+    for (let i = 0; i < numberOfStripes * 2; i++) {
+      ctx.beginPath()
+      ctx.strokeStyle = i % 2 ? color1 : color2
+      ctx.lineWidth = thickness
+      ctx.lineCap = 'round'
+
+      ctx.moveTo(i * thickness + thickness / 2 - WIDTH, 0)
+      ctx.lineTo(0 + i * thickness + thickness / 2, WIDTH)
+      ctx.stroke()
+    }
+  } else {
+    for (let i = 0; i < numberOfStripes; i++) {
+      ctx.beginPath()
+      ctx.strokeStyle = i % 2 ? color1 : color2
+      ctx.lineWidth = thickness
+      ctx.lineCap = 'round'
+
+      if (orientation === 'vertical') {
+        ctx.moveTo(i * thickness + thickness / 2, 0)
+        ctx.lineTo(i * thickness + thickness / 2, WIDTH)
+      } else {
+        ctx.moveTo(0, i * thickness + thickness / 2)
+        ctx.lineTo(WIDTH, i * thickness + thickness / 2)
+      }
+      ctx.stroke()
+    }
+  }
+}
+export const checkers = (ctx, palette) => {
+  const orientations = ['vertical', 'horizontal', 'angled']
+  const color1 = randomItemFromArray(palette)
+  const color2 = randomItemFromArray(palette)
+  const dimension = randomNumber(3, 40)
+  const step = dimension * 2
+  const limit = WIDTH + 50
+
+  ctx.fillStyle = color1
+
+  for (let i = 0; i < limit; i += step) {
+    for (let j = 0; j < limit; j += step) {
+      ctx.beginPath()
+      rectangle(ctx, j, i, dimension)
+
+      ctx.fill()
+    }
+  }
+  for (let i = dimension; i < limit; i += step) {
+    for (let j = dimension; j < limit; j += step) {
+      ctx.beginPath()
+      rectangle(ctx, i, j, dimension)
+
+      ctx.fill()
+    }
+  }
 }

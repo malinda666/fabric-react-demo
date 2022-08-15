@@ -6,7 +6,7 @@ export const capitalize = (obj) => {
     const _t = t[0].toUpperCase() + t.substring(1)
     finalTexts.push(_t)
   }
-  console.log(finalTexts.join(' '))
+  // console.log(finalTexts.join(' '))
   obj.text = finalTexts.join(' ')
 }
 
@@ -18,7 +18,7 @@ export const uppercase = (obj) => {
     const _t = t.toUpperCase()
     finalTexts.push(_t)
   }
-  console.log(finalTexts.join(' '))
+  // console.log(finalTexts.join(' '))
   obj.text = finalTexts.join(' ')
 }
 
@@ -30,6 +30,6 @@ export const randomUppercase = (obj) => {
     const _t = i === 0 || i === txtLines.length - 1 ? t.toUpperCase() : t
     finalTexts.push(_t)
   }
-  console.log(finalTexts.join(' '))
+  // console.log(finalTexts.join(' '))
   obj.text = finalTexts.join(' ')
 }

@@ -16,37 +16,24 @@ import {
   circuit,
   dark,
   bauhaus2,
+  stripes,
+  checkers,
 } from './patternMethods'
 
 import { capitalize, uppercase, randomUppercase } from './textMethods'
 
 import {
   fonts,
-  colorPalettes,
   WIDTH,
   HEIGHT,
-  BACKGROUND_COLOR,
   patternsArray,
   fontStyles,
   trueFalse,
   textStyles,
 } from 'data'
 
-const selectObject = (canvas, id) => {
-  let obj
-  canvas.getObjects().forEach(function (o) {
-    if (o.id === id) {
-      canvas.setActiveObject(o)
-      obj = o
-    }
-  })
+import { clearCanvas, selectObject, fitTextOnCanvas } from 'utils'
 
-  return obj
-}
-export const clearCanvas = (canvas) => {
-  canvas.setBackgroundColor(BACKGROUND_COLOR)
-  canvas.remove(...canvas.getObjects())
-}
 export const createGradientBackground = (canvas, fabric, palette) => {
   const xAngle1 = Math.floor(Math.random() * 360)
   const xAngle2 = Math.floor(Math.random() * 360)
@@ -104,11 +91,37 @@ export const createTextLayer = (
   const isFontGrad = randomItemFromArray(trueFalse)
   const fontStyle = randomItemFromArray(fontStyles)
 
+  // const txt = new fabric.Text('Your Text', {
+  //   fontSize: 250,
+  //   left: 50,
+  //   top: 0,
+  //   lineHeight: 1,
+  //   originX: 'left',
+  //   fontFamily: 'Helvetica',
+  //   fontWeight: 'bold',
+  // })
+  // canvas.add(txt)
+
+  // function textBackground(url) {
+  //   fabric.util.loadImage(url, function (img) {
+  //     txt.set(
+  //       'fill',
+  //       new fabric.Pattern({
+  //         source: img,
+  //         repeat: 'repeat',
+  //       }),
+  //     )
+  //     canvas.renderAll()
+  //   })
+  // }
+
+  // textBackground('http://thepatternlibrary.com/img/u.png')
+
   const text = new fabric.Textbox(keyword, {
     id: 'text_box',
     angle: 0,
     fontFamily: font || 'Inter',
-    fontSize: canvas.width / 8,
+    fontSize: canvas.width / 7,
     fill: palette[3],
     shadow:
       shadowType === ''
@@ -185,14 +198,6 @@ export const createBackground = (canvas, fabricCanvas, fabric, palette) => {
   }
 }
 
-export const getRandomColorPalette = () => {
-  return randomItemFromArray(colorPalettes)
-}
-
-export const getRandomFont = () => {
-  return randomItemFromArray(fonts)
-}
-
 export const createBackgroundGradient = (fabric, palette) => {
   const xAngle1 = Math.floor(Math.random() * 360)
   const xAngle2 = Math.floor(Math.random() * 360)
@@ -236,41 +241,46 @@ export const createBackgroundGradient = (fabric, palette) => {
 
 const renderPattern = (p, ctx, palette) => {
   switch (p) {
-    case 'arc':
+    case 'arc_r':
       createArc(ctx)
       break
-    case 'line':
+    case 'line_r':
       createLine(ctx)
       break
 
-    case 'tri':
+    case 'tri_r':
       createTriangle(ctx)
       break
-    case 'spiral':
+    case 'spiral_r':
       createSpiral(ctx)
       break
 
-    case 'bauhausnoise':
+    case 'bauhaus':
       bauhaus(ctx, palette)
       break
-    case 'voronoinoise':
-      console.log('voronoi')
+    case 'voronoi':
       voronoi(ctx, palette)
       break
-    case 'specksnoise':
+    case 'specks':
       specks(ctx, palette)
       break
-    case 'linesnoise':
+    case 'lines':
       tiledLines(ctx, palette)
       break
-    case 'circuitnoise':
+    case 'circuit':
       circuit(ctx, palette)
       break
-    case 'darknoise':
+    case 'dark':
       dark(ctx, palette)
       break
-    case 'bauhaus2noise':
+    case 'bauhaus2':
       bauhaus2(ctx, palette)
+      break
+    case 'stripes':
+      stripes(ctx, palette)
+      break
+    case 'checkers':
+      checkers(ctx, palette)
       break
 
     default:
@@ -285,12 +295,6 @@ export const createBackgroundPatterns = (fabric, canvas, palette) => {
     initialize: function (options) {
       this.callSuper('initialize', options)
       this.animDirection = 'up'
-
-      this.width = 5
-      this.height = 5
-
-      this.w1 = this.h2 = 5
-      this.h1 = this.w2 = 2
     },
 
     _render: function (ctx) {
@@ -323,18 +327,7 @@ export const createBackgroundPatterns = (fabric, canvas, palette) => {
     },
   })
 
-  if (p.includes('noise')) {
-    // for (let i = 0; i < 2; i++) {
-    // }
-    const c = new Obj({
-      top: 0,
-      left: 0,
-      selectable: false,
-      evented: false,
-    })
-    canvas.add(c)
-    canvas.sendToBack(c)
-  } else {
+  if (p.includes('_r')) {
     for (let i = 50; i >= 0; i--) {
       for (let j = 0; j < 50; j++) {
         const c = new Obj({
@@ -348,6 +341,15 @@ export const createBackgroundPatterns = (fabric, canvas, palette) => {
         canvas.sendToBack(c)
       }
     }
+  } else {
+    const c = new Obj({
+      top: 0,
+      left: 0,
+      selectable: false,
+      evented: false,
+    })
+    canvas.add(c)
+    canvas.sendToBack(c)
   }
 }
 
@@ -396,6 +398,8 @@ const fitText = (cycling, canvas, mainCanvas) => {
   let b = 0
   const cnttextline = txtBox._textLines.length
   const biggestWordIdx = getBiggestItemIndexInArray(stline)
+  const secondaryFont = randomItemFromArray(fonts).value
+  const secondaryFontStyle = randomItemFromArray(fontStyles)
 
   for (let a = 0; a < cnttextline; a++) {
     if (!txtBox._textLines[a]) return
@@ -411,8 +415,8 @@ const fitText = (cycling, canvas, mainCanvas) => {
     })
     if (a === biggestWordIdx) {
       txtBox.setSelectionStyles({
-        fontStyle: randomItemFromArray(fontStyles),
-        fontFamily: randomItemFromArray(fonts).value,
+        fontStyle: secondaryFontStyle,
+        fontFamily: secondaryFont,
       })
       canvas.renderAll()
     }
@@ -445,21 +449,4 @@ const changeTextStyles = (obj, type) => {
       capitalize(obj)
       break
   }
-}
-
-function fitTextOnCanvas(canvas, text, fontface, fontweight) {
-  const ctx = canvas.getContext('2d')
-  // start with a large font size
-  let fontsize = 1024
-
-  // lower the font size until the text fits the canvas
-  do {
-    fontsize--
-
-    ctx.font = fontweight
-      ? fontweight + ' ' + fontsize + 'px ' + fontface
-      : fontsize + 'px ' + fontface
-  } while (ctx.measureText(text).width > canvas.width)
-  // console.log("00000");
-  return fontsize
 }

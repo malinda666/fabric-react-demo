@@ -9,19 +9,21 @@ export const HEIGHT = 600
 export const trueFalse = ['true', '']
 export const fontStyles = ['italic', 'bold', 'normal']
 export const patternsArray = [
-  'arc',
-  'line',
-  'tri',
-  'spiral',
-  // 'bauhausnoise',
-  'voronoinoise',
-  'specksnoise',
-  'linesnoise',
-  'circuitnoise',
-  'darknoise',
-  'bauhaus2noise',
+  'arc_r',
+  'line_r',
+  'tri_r',
+  'spiral_r',
+  'bauhaus',
+  'voronoi',
+  'specks',
+  'lines',
+  'circuit',
+  'dark',
+  'bauhaus2',
+  'stripes',
+  'checkers',
 ]
 export const textStyles = ['capitalize', 'uppercase', 'randomUppercase']
 
 // function vars
-export const hexString = '0123456789abcdef'
+export const hexString = '0123456789abcdef' // not used
