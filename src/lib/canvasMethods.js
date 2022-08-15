@@ -18,6 +18,7 @@ import {
   bauhaus2,
   stripes,
   checkers,
+  swirls,
 } from './patternMethods'
 
 import { capitalize, uppercase, randomUppercase } from './textMethods'
@@ -30,6 +31,7 @@ import {
   fontStyles,
   trueFalse,
   textStyles,
+  textPos,
 } from 'data'
 
 import { clearCanvas, selectObject, fitTextOnCanvas } from 'utils'
@@ -91,35 +93,12 @@ export const createTextLayer = (
   const isFontGrad = randomItemFromArray(trueFalse)
   const fontStyle = randomItemFromArray(fontStyles)
 
-  // const txt = new fabric.Text('Your Text', {
-  //   fontSize: 250,
-  //   left: 50,
-  //   top: 0,
-  //   lineHeight: 1,
-  //   originX: 'left',
-  //   fontFamily: 'Helvetica',
-  //   fontWeight: 'bold',
-  // })
-  // canvas.add(txt)
-
-  // function textBackground(url) {
-  //   fabric.util.loadImage(url, function (img) {
-  //     txt.set(
-  //       'fill',
-  //       new fabric.Pattern({
-  //         source: img,
-  //         repeat: 'repeat',
-  //       }),
-  //     )
-  //     canvas.renderAll()
-  //   })
-  // }
-
-  // textBackground('http://thepatternlibrary.com/img/u.png')
+  const textPosition = randomItemFromArray(textPos)
 
   const text = new fabric.Textbox(keyword, {
     id: 'text_box',
     angle: 0,
+    top: 0,
     fontFamily: font || 'Inter',
     fontSize: canvas.width / 7,
     fill: palette[3],
@@ -139,8 +118,8 @@ export const createTextLayer = (
     // width: canvas.getWidth() - 30,
     fontCharacterStyle: 'Caps',
     editable: false,
-    evented: false,
-    perPixelTargetFind: false,
+    // evented: false,
+    // perPixelTargetFind: false,
   })
   canvas.add(text)
   isFontGrad === ''
@@ -161,8 +140,25 @@ export const createTextLayer = (
       )
     : text.set({ fill: palette[3] })
 
+  const t = text.get('height') / 1.9
+  const b = HEIGHT - t
+  switch (textPosition.toLowerCase()) {
+    case 'top':
+      text.set('top', t).setCoords()
+      break
+    case 'center':
+      text.centerV().setCoords()
+      break
+    case 'bottom':
+      text.set('top', b).setCoords()
+      break
+
+    default:
+      break
+  }
+
   text.centerH().setCoords()
-  text.centerV().setCoords()
+  // text.centerV().setCoords()
   canvas.bringToFront(text)
   // setTimeout(() => {
   fitText(false, altCanvas, canvas)
@@ -173,8 +169,8 @@ export const createTextLayer = (
 }
 
 export const createBackground = (canvas, fabricCanvas, fabric, palette) => {
-  // const isPattern = ''
-  const isPattern = randomItemFromArray(trueFalse)
+  const isPattern = ''
+  // const isPattern = randomItemFromArray(trueFalse)
 
   const shape = new fabric.Rect({
     width: WIDTH,
@@ -281,6 +277,9 @@ const renderPattern = (p, ctx, palette) => {
       break
     case 'checkers':
       checkers(ctx, palette)
+      break
+    case 'swirls':
+      swirls(ctx, palette)
       break
 
     default:

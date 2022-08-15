@@ -136,8 +136,8 @@ export default function App() {
           big.toBlobHD((blob) => {
             const objurl = URL.createObjectURL(blob)
             downloadRef.current.href = objurl
-            downloadRef.current.download = 'artwork.png'
-            downloadRef.current.setAttribute('download', 'final_artwork.png')
+            downloadRef.current.download = 'artwork.jpg'
+            downloadRef.current.setAttribute('download', 'final_artwork.jpg')
             downloadRef.current.click()
             downloadRef.current.href = '#'
             // console.log(downloadRef.current);

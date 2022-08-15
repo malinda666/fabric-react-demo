@@ -22,8 +22,10 @@ export const patternsArray = [
   'bauhaus2',
   'stripes',
   'checkers',
+  'swirls',
 ]
 export const textStyles = ['capitalize', 'uppercase', 'randomUppercase']
+export const textPos = ['top', 'center', 'bottom']
 
 // function vars
 export const hexString = '0123456789abcdef' // not used

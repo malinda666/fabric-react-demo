@@ -530,7 +530,7 @@ export const stripes = (ctx, palette) => {
   const orientations = ['vertical', 'horizontal', 'angled']
   const color1 = randomItemFromArray(palette)
   const color2 = randomItemFromArray(palette)
-  const numberOfStripes = randomNumber(10, 40)
+  const numberOfStripes = randomNumber(10, 120)
   const thickness = WIDTH / numberOfStripes
   const orientation = randomItemFromArray(orientations)
 
@@ -564,29 +564,83 @@ export const stripes = (ctx, palette) => {
   }
 }
 export const checkers = (ctx, palette) => {
-  // const orientations = ['vertical', 'horizontal', 'angled']
+  const orientations = [
+    // 'horizontal',
+    'angled',
+  ]
   const color1 = randomItemFromArray(palette)
   // const color2 = randomItemFromArray(palette)
   const dimension = randomNumber(3, 40)
   const step = dimension * 2
   const limit = WIDTH + 50
+  const orientation = randomItemFromArray(orientations)
 
   ctx.fillStyle = color1
 
-  for (let i = 0; i < limit; i += step) {
-    for (let j = 0; j < limit; j += step) {
-      ctx.beginPath()
-      rectangle(ctx, j, i, dimension)
+  if (orientation === 'angled') {
+    ctx.translate(WIDTH / 2, HEIGHT / 2)
+    ctx.rotate(Math.PI / 4)
+    for (let i = -limit; i < limit; i += step) {
+      for (let j = -limit; j < limit; j += step) {
+        ctx.beginPath()
+        rectangle(ctx, i, j, dimension)
+        ctx.fill()
+      }
+    }
+    for (let i = dimension + limit * -1; i < limit; i += step) {
+      for (let j = dimension + limit * -1; j < limit; j += step) {
+        ctx.beginPath()
+        rectangle(ctx, i, j, dimension)
 
-      ctx.fill()
+        ctx.fill()
+      }
+    }
+    ctx.translate(WIDTH / -2, HEIGHT / -2)
+  } else {
+    for (let i = 0; i < limit; i += step) {
+      for (let j = 0; j < limit; j += step) {
+        ctx.beginPath()
+        rectangle(ctx, i, j, dimension)
+        ctx.fill()
+      }
+    }
+    for (let i = dimension; i < limit; i += step) {
+      for (let j = dimension; j < limit; j += step) {
+        ctx.beginPath()
+        rectangle(ctx, i, j, dimension)
+
+        ctx.fill()
+      }
     }
   }
-  for (let i = dimension; i < limit; i += step) {
-    for (let j = dimension; j < limit; j += step) {
-      ctx.beginPath()
-      rectangle(ctx, i, j, dimension)
+}
+export const swirls = (ctx, palette) => {
+  const radius = randomNumber(5, 25)
+  const cols = Math.floor(WIDTH / radius)
+  const rows = Math.floor(HEIGHT / radius)
+  const patternMap = []
 
-      ctx.fill()
+  for (let i = 0; i < rows; i++) {
+    patternMap[i] = []
+
+    for (let j; j < cols; j++) {
+      patternMap[i].push((Math.random() * 4) | 0)
+    }
+  }
+
+  ctx.lineWidth = 1
+
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      ctx.beginPath()
+      // ctx.strokeStyle = randomItemFromArray(palette)
+      ctx.strokeStyle = `hsl(${
+        (Math.max(i, j) * 20) % 360
+      }, 60%, ${randomNumber(40, 75)}%)`
+      ctx.arc(i * radius, j * radius, radius, 0, Math.PI / 2)
+      ctx.moveTo(i * radius, j * radius)
+      ctx.closePath()
+      ctx.stroke()
     }
   }
 }
