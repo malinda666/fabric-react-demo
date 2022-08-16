@@ -94,13 +94,14 @@ export const createTextLayer = (
   const fontStyle = randomItemFromArray(fontStyles)
 
   const textPosition = randomItemFromArray(textPos)
+  const fontSizeD = randomNumber(6, 11)
 
   const text = new fabric.Textbox(keyword, {
     id: 'text_box',
     angle: 0,
     top: 0,
     fontFamily: font || 'Inter',
-    fontSize: canvas.width / 7,
+    fontSize: canvas.width / fontSizeD,
     fill: palette[3],
     shadow:
       shadowType === ''
@@ -140,7 +141,7 @@ export const createTextLayer = (
       )
     : text.set({ fill: palette[3] })
 
-  const t = text.get('height') / 1.9
+  const t = text.get('height') / 1.9 + fontSizeD
   const b = HEIGHT - t
   switch (textPosition.toLowerCase()) {
     case 'top':
