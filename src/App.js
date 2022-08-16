@@ -47,6 +47,8 @@ export default function App() {
 
     const canvas2 = new fabric.Canvas('can')
     setCanvas2(canvas2)
+
+    finalCanvas.current.style.opacity = 0
   }, [])
   useLayoutEffect(() => {
     setLoading(true)
@@ -117,36 +119,73 @@ export default function App() {
     }
     canvas.renderAll()
   }
+
+  const toblob = async (c) => {
+    if (!c) return
+    return new Promise((resolve, reject) => {
+      try {
+        c.toBlobHD(
+          (blob) => {
+            resolve(blob)
+          },
+          'image/jpeg',
+          1,
+        )
+      } catch (err) {
+        console.log(err)
+        reject(err)
+      }
+    })
+  }
+
   const downloadCanvas = () => {
     const image = new Image()
     image.crossOrigin = 'anonymous'
     // eslint-disable-next-line no-unused-vars
-    image.onload = function (event) {
+    image.onload = async function (event) {
       canvas.discardActiveObject().renderAll()
       // console.log("loadin");
       setLoading(true)
       try {
         zoom(OUTPUT_SIZE)
-        setTimeout(() => {
-          const canvasEl = canvas.wrapperEl.childNodes[0]
-          const big = finalCanvas.current
-          big.style.opacity = 0
-          const ctx = big.getContext('2d')
-          ctx.drawImage(canvasEl, 0, 0, OUTPUT_SIZE, OUTPUT_SIZE)
-          big.toBlobHD((blob) => {
+
+        const canvasEl = canvas.wrapperEl.childNodes[0]
+        const big = finalCanvas.current
+
+        const ctx = big.getContext('2d')
+        ctx.drawImage(canvasEl, 0, 0, OUTPUT_SIZE, OUTPUT_SIZE)
+        await toblob(big)
+          .then((blob) => {
             const objurl = URL.createObjectURL(blob)
             downloadRef.current.href = objurl
             downloadRef.current.download = 'artwork.jpg'
-            downloadRef.current.setAttribute('download', 'final_artwork.jpg')
-            downloadRef.current.click()
-            downloadRef.current.href = '#'
-            // console.log(downloadRef.current);
-            console.log('inside download')
-            setLoading(false)
+            // downloadRef.current.setAttribute('download', 'final_artwork.jpg')
+
+            // console.log('inside download')
             zoom(600)
           })
-        }, 1200)
-        console.log('outside')
+          .then(() => {
+            downloadRef.current.click()
+            console.log(downloadRef.current)
+          })
+          .catch((err) => console.log(err))
+          .finally(() => {
+            downloadRef.current.href = '#'
+            // console.log(downloadRef.current)
+          })
+
+        // big.toBlobHD((blob) => {
+        //   const objurl = URL.createObjectURL(blob)
+        //   downloadRef.current.href = objurl
+        //   downloadRef.current.download = 'artwork.jpg'
+        //   downloadRef.current.setAttribute('download', 'final_artwork.jpg')
+        //   downloadRef.current.click()
+        //   downloadRef.current.href = '#'
+        //   // console.log(downloadRef.current);
+        //   console.log('inside download')
+        //   setLoading(false)
+        //   zoom(600)
+        // })
       } catch (e) {
         console.log(e)
       } finally {
@@ -189,7 +228,7 @@ export default function App() {
           <p className='text-xs text-gray-700 dark:text-gray-400 mr-4 capitalize'>
             main font: {fontFamily}
           </p>
-          <div>
+          <div className='relative flex'>
             <button
               className={[
                 'relative inline-flex items-center justify-center p-0.5 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500',
@@ -206,31 +245,30 @@ export default function App() {
               </span>
             </button>
 
-            <a ref={downloadRef} href='#' data-tip data-for='download'>
-              <button
-                type='button'
-                className='text-white  bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2'
-                onClick={() => download()}
+            <button
+              type='button'
+              className='text-white  bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2'
+              onClick={download}
+            >
+              Download Artwork
+              <svg
+                aria-hidden='true'
+                className='ml-2 -mr-1 w-5 h-5 inline-block'
+                fill='currentColor'
+                viewBox='0 0 20 20'
+                xmlns='http://www.w3.org/2000/svg'
               >
-                Download Artwork
-                <svg
-                  aria-hidden='true'
-                  className='ml-2 -mr-1 w-5 h-5 inline-block'
-                  fill='currentColor'
-                  viewBox='0 0 20 20'
-                  xmlns='http://www.w3.org/2000/svg'
-                >
-                  <path
-                    fillRule='evenodd'
-                    d='M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z'
-                    clipRule='evenodd'
-                  ></path>
-                </svg>
-              </button>
-            </a>
+                <path
+                  fillRule='evenodd'
+                  d='M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z'
+                  clipRule='evenodd'
+                ></path>
+              </svg>
+            </button>
           </div>
         </div>
       </div>
+      <a ref={downloadRef} href='#'></a>
       <div className='hidden'>
         <canvas
           id='c'
