@@ -141,11 +141,11 @@ export const createTextLayer = (
       )
     : text.set({ fill: palette[3] })
 
-  const t = text.get('height') / 1.9 + fontSizeD
+  const t = text.get('height') / 1.9
   const b = HEIGHT - t
   switch (textPosition.toLowerCase()) {
     case 'top':
-      text.set('top', t).setCoords()
+      text.set('top', t + fontSizeD).setCoords()
       break
     case 'center':
       text.centerV().setCoords()
