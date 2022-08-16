@@ -11,7 +11,7 @@ import {
   getRandomColorPalette,
   getRandomFont,
 } from 'lib'
-import { fonts, BACKGROUND_COLOR, HEIGHT, WIDTH } from 'data'
+import { fonts, BACKGROUND_COLOR, HEIGHT, WIDTH, OUTPUT_SIZE } from 'data'
 
 export default function App() {
   const canvasRef = useRef()
@@ -124,15 +124,15 @@ export default function App() {
     image.onload = function (event) {
       canvas.discardActiveObject().renderAll()
       // console.log("loadin");
+      setLoading(true)
       try {
-        setLoading(true)
-
-        zoom(3000)
+        zoom(OUTPUT_SIZE)
         setTimeout(() => {
           const canvasEl = canvas.wrapperEl.childNodes[0]
           const big = finalCanvas.current
+          big.style.opacity = 0
           const ctx = big.getContext('2d')
-          ctx.drawImage(canvasEl, 0, 0, 3000, 3000)
+          ctx.drawImage(canvasEl, 0, 0, OUTPUT_SIZE, OUTPUT_SIZE)
           big.toBlobHD((blob) => {
             const objurl = URL.createObjectURL(blob)
             downloadRef.current.href = objurl
@@ -141,16 +141,20 @@ export default function App() {
             downloadRef.current.click()
             downloadRef.current.href = '#'
             // console.log(downloadRef.current);
+            console.log('inside download')
             setLoading(false)
             zoom(600)
           })
         }, 1200)
+        console.log('outside')
       } catch (e) {
         console.log(e)
+      } finally {
         setLoading(false)
       }
     }
-    image.src = 'https://i.chzbgr.com/maxW500/1691290368/h07F7F378/'
+    image.src =
+      'https://upload.wikimedia.org/wikipedia/commons/f/f8/Fulmer_Falls_Closeup_3000px.jpg'
   }
 
   return (
@@ -190,10 +194,9 @@ export default function App() {
               className={[
                 'relative inline-flex items-center justify-center p-0.5 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-500 to-pink-500',
                 'group-hover:from-purple-500 group-hover:to-pink-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800',
-                'disabled:pointer-events-none',
+                isLoading ? 'pointer-events-none' : 'pointer-events-auto',
               ].join(' ')}
               onClick={regenerate}
-              disabled={isLoading}
             >
               <span className='relative px-5 py-2 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0 flex items-center justify-center'>
                 Regenerate
@@ -238,8 +241,8 @@ export default function App() {
       <div className='hidden'>
         <canvas
           id='final'
-          height='3000px'
-          width='3000px'
+          height={OUTPUT_SIZE}
+          width={OUTPUT_SIZE}
           // eslint-disable-next-line react/no-unknown-property
           crossOrigin='anonymous'
           ref={finalCanvas}

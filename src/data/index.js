@@ -6,6 +6,8 @@ export const BACKGROUND_COLOR = 'rgb(229 ,231, 235 ,1)'
 export const WIDTH = 600
 export const HEIGHT = 600
 
+export const OUTPUT_SIZE = 3000
+
 export const trueFalse = ['true', '']
 export const fontStyles = ['italic', 'bold', 'normal']
 export const patternsArray = [

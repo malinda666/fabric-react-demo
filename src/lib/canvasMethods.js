@@ -140,7 +140,6 @@ export const createTextLayer = (
         }),
       )
     : text.set({ fill: palette[3] })
-
   const t = text.get('height') / 1.9
   const b = HEIGHT - t
   switch (textPosition.toLowerCase()) {
@@ -368,6 +367,18 @@ const fitText = (cycling, canvas, mainCanvas) => {
   txtBox.cleanStyle('fontSize')
   txtBox.set({ textAlign: 'center' })
   canvas.renderAll()
+  const altTexts = txtBox.textLines?.map((txt) => {
+    // let _txt = ''
+    // if (txt.length < 4) {
+    //   _txt = `${txt + 'ddd'}`
+    // } else {
+    //   _txt = txt
+    // }
+    return txt
+  })
+  txtBox.text = altTexts.join(' ')
+
+  // console.log(txtBox, altTexts)
 
   const fitFont = txtBox.fontFamily
   const weight = txtBox.fontWeight
@@ -375,10 +386,13 @@ const fitText = (cycling, canvas, mainCanvas) => {
   const stline = []
   const cntLines = txtBox.textLines?.length
   for (let j = 0; j < cntLines; j++) {
-    const t = txtBox.textLines[j]
+    const t = altTexts[j]
     const _t = t[0].toUpperCase() + t.substring(1)
     texts.push(_t)
   }
+
+  // console.log(texts)
+
   let yPos = 0,
     fontsize
   texts.forEach(function (txt) {
