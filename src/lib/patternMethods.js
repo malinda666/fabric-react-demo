@@ -509,7 +509,7 @@ export const bauhaus2 = (ctx, palette) => {
     draw()
   }
   function draw() {
-    background(25)
+    background()
     for (let y = blockSize / 2; y < height; y += blockSize) {
       for (let x = blockSize / 2; x < width; x += blockSize) {
         queueNum = shuffleArray([0, 1, 2, 3, 4])
@@ -522,7 +522,7 @@ export const bauhaus2 = (ctx, palette) => {
         ctx.restore()
       }
     }
-    paper()
+    // paper()
   }
   resetPatchwork(randomItemFromArray(modes))
 }

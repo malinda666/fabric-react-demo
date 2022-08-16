@@ -181,17 +181,19 @@ export const createBackground = (canvas, fabricCanvas, fabric, palette) => {
     evented: false,
   })
 
+  console.log('rendering background')
+
   if (isPattern === '') {
     shape.set('fill', createBackgroundPatterns(fabric, fabricCanvas, palette))
     fabricCanvas.add(shape)
     fabricCanvas.sendToBack(shape)
-    fabricCanvas.renderAll()
+    // fabricCanvas.renderAll()
   } else {
     shape.set('fill', createBackgroundGradient(fabric, palette))
     fabricCanvas.add(shape)
     fabricCanvas.sendToBack(shape)
-    fabricCanvas.renderAll()
   }
+  // fabricCanvas.renderAll()
 }
 
 export const createBackgroundGradient = (fabric, palette) => {
@@ -288,6 +290,7 @@ const renderPattern = (p, ctx, palette) => {
 }
 export const createBackgroundPatterns = (fabric, canvas, palette) => {
   const p = randomItemFromArray(patternsArray)
+  console.log('rendering pattern')
 
   const Obj = fabric.util.createClass(fabric.Object, {
     objectCaching: false,

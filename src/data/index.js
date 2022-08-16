@@ -15,7 +15,6 @@ export const patternsArray = [
   'line_r',
   'tri_r',
   'spiral_r',
-  'bauhaus',
   'voronoi',
   'specks',
   'lines',

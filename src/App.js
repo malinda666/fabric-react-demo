@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { fabric } from 'fabric'
 import WF from 'webfontloader'
 import 'canvas-toBlob/canvas-toBlob'
@@ -29,7 +29,7 @@ export default function App() {
   } = useCanvas()
   const [keyword, setKeyword] = useState('')
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (canvas) return
     const _canvas = new fabric.Canvas('canvas', {
       height: HEIGHT,
@@ -50,7 +50,7 @@ export default function App() {
 
     finalCanvas.current.style.opacity = 0
   }, [])
-  useLayoutEffect(() => {
+  useEffect(() => {
     setLoading(true)
     const list = fonts.map((item) => item.value)
     WF.load({
@@ -159,19 +159,14 @@ export default function App() {
             const objurl = URL.createObjectURL(blob)
             downloadRef.current.href = objurl
             downloadRef.current.download = 'artwork.jpg'
-            // downloadRef.current.setAttribute('download', 'final_artwork.jpg')
-
-            // console.log('inside download')
             zoom(600)
           })
           .then(() => {
             downloadRef.current.click()
-            console.log(downloadRef.current)
           })
           .catch((err) => console.log(err))
           .finally(() => {
             downloadRef.current.href = '#'
-            // console.log(downloadRef.current)
           })
 
         // big.toBlobHD((blob) => {
